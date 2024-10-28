@@ -1,0 +1,931 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ent Schema API",
+    "description": "This is an auto generated API description made out of an Ent schema definition",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/admin-areas": {
+      "get": {
+        "tags": [
+          "AdminArea"
+        ],
+        "summary": "List AdminAreas",
+        "description": "List AdminAreas.",
+        "operationId": "listAdminArea",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result AdminArea list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "per_page": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "current_page": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "last_page": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "from": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "to": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "first_page_url": {
+                      "type": "string"
+                    },
+                    "last_page_url": {
+                      "type": "string"
+                    },
+                    "next_page_url": {
+                      "type": "string"
+                    },
+                    "prev_page_url": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AdminAreaList"
+                      }
+                    }
+                  },
+                  "required": [
+                    "total",
+                    "page",
+                    "per_age",
+                    "current_age",
+                    "last_age",
+                    "from",
+                    "to",
+                    "first_age_url",
+                    "last_age_url",
+                    "next_age_url",
+                    "prev_age_url",
+                    "path",
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminArea"
+        ],
+        "summary": "Create a new AdminArea",
+        "description": "Creates a new AdminArea and persists it to storage.",
+        "operationId": "createAdminArea",
+        "requestBody": {
+          "description": "AdminArea to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "description": "Administrative area name",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2
+                  },
+                  "abbr": {
+                    "description": "Administrative area abbreviations, CSV values",
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 255,
+                    "minLength": 1
+                  },
+                  "memo": {
+                    "description": "Remarks",
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 255,
+                    "minLength": 1
+                  },
+                  "parent_id": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "AdminArea created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAreaCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/admin-areas/{id}": {
+      "get": {
+        "tags": [
+          "AdminArea"
+        ],
+        "summary": "Find a AdminArea by ID",
+        "description": "Finds the AdminArea with the requested ID and returns it.",
+        "operationId": "readAdminArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AdminArea",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AdminArea with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAreaRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminArea"
+        ],
+        "summary": "Deletes a AdminArea by ID",
+        "description": "Deletes the AdminArea with the requested ID.",
+        "operationId": "deleteAdminArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AdminArea",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "AdminArea with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "AdminArea"
+        ],
+        "summary": "Updates a AdminArea",
+        "description": "Updates a AdminArea and persists changes to storage.",
+        "operationId": "updateAdminArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AdminArea",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "AdminArea properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "description": "Administrative area name",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2
+                  },
+                  "abbr": {
+                    "description": "Administrative area abbreviations, CSV values",
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 255,
+                    "minLength": 1
+                  },
+                  "memo": {
+                    "description": "Remarks",
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 255,
+                    "minLength": 1
+                  },
+                  "parent_id": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "AdminArea updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAreaUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/admin-areas/{id}/children": {
+      "get": {
+        "tags": [
+          "AdminArea"
+        ],
+        "summary": "List attached Childrens",
+        "description": "List attached Childrens.",
+        "operationId": "listAdminAreaChildren",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AdminArea",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result AdminAreas list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminArea_ChildrenList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/admin-areas/{id}/parent": {
+      "get": {
+        "tags": [
+          "AdminArea"
+        ],
+        "summary": "Find the attached AdminArea",
+        "description": "Find the attached AdminArea of the AdminArea with the given ID",
+        "operationId": "readAdminAreaParent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AdminArea",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AdminArea attached to AdminArea with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminArea_ParentRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdminArea": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "description": "Administrative area name",
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "abbr": {
+            "description": "Administrative area abbreviations, CSV values",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "memo": {
+            "description": "Remarks",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "parent": {
+            "$ref": "#/components/schemas/AdminArea"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminArea"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AdminAreaCreate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "description": "Administrative area name",
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "abbr": {
+            "description": "Administrative area abbreviations, CSV values",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "memo": {
+            "description": "Remarks",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AdminAreaList": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "description": "Administrative area name",
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "abbr": {
+            "description": "Administrative area abbreviations, CSV values",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "memo": {
+            "description": "Remarks",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AdminAreaRead": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "description": "Administrative area name",
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "abbr": {
+            "description": "Administrative area abbreviations, CSV values",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "memo": {
+            "description": "Remarks",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AdminAreaUpdate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "description": "Administrative area name",
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "abbr": {
+            "description": "Administrative area abbreviations, CSV values",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "memo": {
+            "description": "Remarks",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AdminArea_ChildrenList": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "description": "Administrative area name",
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "abbr": {
+            "description": "Administrative area abbreviations, CSV values",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "memo": {
+            "description": "Remarks",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AdminArea_ParentRead": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "description": "Administrative area name",
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "abbr": {
+            "description": "Administrative area abbreviations, CSV values",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "memo": {
+            "description": "Remarks",
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      }
+    },
+    "responses": {
+      "400": {
+        "description": "invalid input, data invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "errors": {}
+              },
+              "required": [
+                "code",
+                "status"
+              ]
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "insufficient permissions",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "errors": {}
+              },
+              "required": [
+                "code",
+                "status"
+              ]
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "errors": {}
+              },
+              "required": [
+                "code",
+                "status"
+              ]
+            }
+          }
+        }
+      },
+      "409": {
+        "description": "conflicting resources",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "errors": {}
+              },
+              "required": [
+                "code",
+                "status"
+              ]
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "unexpected error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "errors": {}
+              },
+              "required": [
+                "code",
+                "status"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
