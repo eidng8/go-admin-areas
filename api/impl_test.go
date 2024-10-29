@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"log"
+	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
@@ -20,7 +21,9 @@ import (
 
 var jsoniter = jitr.ConfigCompatibleWithStandardLibrary
 
-func setupGinTest(tb testing.TB) (*gin.Engine, *ent.Client) {
+func setupGinTest(tb testing.TB) (
+	*gin.Engine, *ent.Client, *httptest.ResponseRecorder,
+) {
 	cfg := mysql.Config{
 		User:                 os.Getenv("DB_USER"),
 		Passwd:               os.Getenv("DB_PASSWORD"),
@@ -54,5 +57,7 @@ func setupGinTest(tb testing.TB) (*gin.Engine, *ent.Client) {
 		assert.Nil(tb, err)
 	}
 
-	return engine, entClient
+	res := httptest.NewRecorder()
+
+	return engine, entClient, res
 }

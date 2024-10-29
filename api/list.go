@@ -18,7 +18,7 @@ func (s Server) ListAdminArea(
 ) (ListAdminAreaResponseObject, error) {
 	c := ctx.(*gin.Context)
 	pageParams := paginate.GetPaginationParams(c)
-	query := s.EntClient.AdminArea.Query().Order(adminarea.ByID())
+	query := s.EC.AdminArea.Query().Order(adminarea.ByID())
 	areas, err := paginate.GetPage[ent.AdminArea](
 		c, context.Background(), query, pageParams,
 	)

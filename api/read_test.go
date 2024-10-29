@@ -13,7 +13,7 @@ import (
 )
 
 func Test_ReadAdminArea_should_return_one_record(t *testing.T) {
-	engine, entClient := setupGinTest(t)
+	engine, entClient, _ := setupGinTest(t)
 	rec := entClient.AdminArea.Query().Where(adminarea.ID(1)).
 		OnlyX(context.Background())
 	eaa := AdminArea{
@@ -25,7 +25,7 @@ func Test_ReadAdminArea_should_return_one_record(t *testing.T) {
 	bytes, err := jsoniter.Marshal(eaa)
 	assert.Nil(t, err)
 	expected := string(bytes)
-	req, _ := http.NewRequest("GET", "/admin-areas/1", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/admin-areas/1", nil)
 	res := httptest.NewRecorder()
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)

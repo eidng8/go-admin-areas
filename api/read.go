@@ -11,7 +11,7 @@ import (
 func (s Server) ReadAdminArea(
 	ctx context.Context, request ReadAdminAreaRequestObject,
 ) (ReadAdminAreaResponseObject, error) {
-	area, err := s.EntClient.AdminArea.Query().
+	area, err := s.EC.AdminArea.Query().
 		Where(adminarea.ID(uint32(request.Id))).Only(ctx)
 	if err != nil {
 		return nil, err

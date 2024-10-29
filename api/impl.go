@@ -9,7 +9,7 @@ import (
 )
 
 type Server struct {
-	EntClient *ent.Client
+	EC *ent.Client
 }
 
 // Create a new AdminArea
@@ -58,7 +58,7 @@ func (s Server) ReadAdminAreaParent(
 }
 
 func NewServer(entClient *ent.Client) Server {
-	return Server{EntClient: entClient}
+	return Server{EC: entClient}
 }
 
 var _ StrictServerInterface = (*Server)(nil)

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/eidng8/go-paginate"
@@ -17,7 +16,7 @@ import (
 )
 
 func Test_ListAdminArea_should_return_first_page(t *testing.T) {
-	engine, entClient := setupGinTest(t)
+	engine, entClient, response := setupGinTest(t)
 	count := entClient.AdminArea.Query().CountX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
 		AllX(context.Background())
@@ -45,16 +44,15 @@ func Test_ListAdminArea_should_return_first_page(t *testing.T) {
 	bytes, err := jsoniter.Marshal(page)
 	assert.Nil(t, err)
 	expected := string(bytes)
-	req, _ := http.NewRequest("GET", "/admin-areas", nil)
-	res := httptest.NewRecorder()
-	engine.ServeHTTP(res, req)
-	assert.Equal(t, http.StatusOK, res.Code)
-	actual := res.Body.String()
+	req, _ := http.NewRequest(http.MethodGet, "/admin-areas", nil)
+	engine.ServeHTTP(response, req)
+	assert.Equal(t, http.StatusOK, response.Code)
+	actual := response.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
 func Test_ListAdminArea_should_return_fourth_page(t *testing.T) {
-	engine, entClient := setupGinTest(t)
+	engine, entClient, response := setupGinTest(t)
 	count := entClient.AdminArea.Query().CountX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
 		Offset(30).AllX(context.Background())
@@ -82,16 +80,15 @@ func Test_ListAdminArea_should_return_fourth_page(t *testing.T) {
 	bytes, err := jsoniter.Marshal(page)
 	assert.Nil(t, err)
 	expected := string(bytes)
-	req, _ := http.NewRequest("GET", "/admin-areas?page=4", nil)
-	res := httptest.NewRecorder()
-	engine.ServeHTTP(res, req)
-	assert.Equal(t, http.StatusOK, res.Code)
-	actual := res.Body.String()
+	req, _ := http.NewRequest(http.MethodGet, "/admin-areas?page=4", nil)
+	engine.ServeHTTP(response, req)
+	assert.Equal(t, http.StatusOK, response.Code)
+	actual := response.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
 func Test_ListAdminArea_should_return_fourth_page_5_per_page(t *testing.T) {
-	engine, entClient := setupGinTest(t)
+	engine, entClient, response := setupGinTest(t)
 	count := entClient.AdminArea.Query().CountX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(5).
 		Offset(15).AllX(context.Background())
@@ -119,10 +116,11 @@ func Test_ListAdminArea_should_return_fourth_page_5_per_page(t *testing.T) {
 	bytes, err := jsoniter.Marshal(page)
 	assert.Nil(t, err)
 	expected := string(bytes)
-	req, _ := http.NewRequest("GET", "/admin-areas?page=4&per_page=5", nil)
-	res := httptest.NewRecorder()
-	engine.ServeHTTP(res, req)
-	assert.Equal(t, http.StatusOK, res.Code)
-	actual := res.Body.String()
+	req, _ := http.NewRequest(
+		http.MethodGet, "/admin-areas?page=4&per_page=5", nil,
+	)
+	engine.ServeHTTP(response, req)
+	assert.Equal(t, http.StatusOK, response.Code)
+	actual := response.Body.String()
 	require.JSONEq(t, expected, actual)
 }
