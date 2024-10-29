@@ -9,14 +9,13 @@ import (
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/gin-gonic/gin"
 
-	"eidng8.cc/microservices/admin-areas/api"
 	"eidng8.cc/microservices/admin-areas/ent"
 	_ "eidng8.cc/microservices/admin-areas/ent/runtime"
 )
 
 func main() {
 	entClient := getEntClient()
-	engine, err := api.NewEngine(
+	engine, err := NewEngine(
 		getenvd("SERVER_MODE", gin.ReleaseMode), entClient,
 	)
 	if err != nil {

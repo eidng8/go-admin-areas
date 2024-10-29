@@ -33,7 +33,7 @@ func openMysql() *sql.DB {
 }
 
 func openSqlite() *sql.DB {
-	dsn := getenv("DB_PATH") + "?" + getenvd("DB_OPTIONS", "")
+	dsn := getenv("DB_PATH")
 	db, err := sql.Open(dialect.SQLite, dsn)
 	if err != nil {
 		log.Fatalf("Failed to open SQLite connection: %s", err)
