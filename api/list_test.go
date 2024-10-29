@@ -8,6 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/eidng8/go-paginate"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -26,7 +28,7 @@ func Test_ListAdminArea_should_return_first_page(t *testing.T) {
 		list[i] = &aa
 	}
 	last := int(math.Ceil(float64(count) / float64(10)))
-	page := PaginatedList[AdminArea]{
+	page := paginate.PaginatedList[AdminArea]{
 		Total:        count,
 		PerPage:      10,
 		CurrentPage:  1,
@@ -63,7 +65,7 @@ func Test_ListAdminArea_should_return_fourth_page(t *testing.T) {
 		list[i] = &aa
 	}
 	last := int(math.Ceil(float64(count) / float64(10)))
-	page := PaginatedList[AdminArea]{
+	page := paginate.PaginatedList[AdminArea]{
 		Total:        count,
 		PerPage:      10,
 		CurrentPage:  4,
@@ -100,7 +102,7 @@ func Test_ListAdminArea_should_return_fourth_page_5_per_page(t *testing.T) {
 		list[i] = &aa
 	}
 	last := int(math.Ceil(float64(count) / float64(5)))
-	page := PaginatedList[AdminArea]{
+	page := paginate.PaginatedList[AdminArea]{
 		Total:        count,
 		PerPage:      5,
 		CurrentPage:  4,

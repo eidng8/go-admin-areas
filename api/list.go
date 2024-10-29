@@ -5,6 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/eidng8/go-paginate"
+
 	"eidng8.cc/microservices/admin-areas/ent"
 	"eidng8.cc/microservices/admin-areas/ent/adminarea"
 )
@@ -15,9 +17,9 @@ func (s Server) ListAdminArea(
 	ctx context.Context, request ListAdminAreaRequestObject,
 ) (ListAdminAreaResponseObject, error) {
 	c := ctx.(*gin.Context)
-	pageParams := GetPaginationParams(c)
+	pageParams := paginate.GetPaginationParams(c)
 	query := s.EntClient.AdminArea.Query().Order(adminarea.ByID())
-	areas, err := GetPage[ent.AdminArea](
+	areas, err := paginate.GetPage[ent.AdminArea](
 		c, context.Background(), query, pageParams,
 	)
 	if err != nil {
