@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"eidng8.cc/microservices/admin-areas/ent/adminarea"
+	"github.com/eidng8/go-admin-areas/ent/adminarea"
 )
 
 func Test_ReadAdminArea_should_return_one_record(t *testing.T) {

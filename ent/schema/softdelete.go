@@ -12,9 +12,9 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 
-	gen "eidng8.cc/microservices/admin-areas/ent"
-	"eidng8.cc/microservices/admin-areas/ent/hook"
-	"eidng8.cc/microservices/admin-areas/ent/intercept"
+	gen "github.com/eidng8/go-admin-areas/ent"
+	"github.com/eidng8/go-admin-areas/ent/hook"
+	"github.com/eidng8/go-admin-areas/ent/intercept"
 )
 
 // SoftDeleteMixin implements the soft delete pattern for schemas.

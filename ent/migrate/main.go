@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"eidng8.cc/microservices/admin-areas/ent/migrate"
+	"github.com/eidng8/go-admin-areas/ent/migrate"
 
 	atlas "ariga.io/atlas/sql/migrate"
 	"entgo.io/ent/dialect"

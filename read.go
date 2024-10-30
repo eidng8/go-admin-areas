@@ -5,8 +5,8 @@ import (
 
 	"github.com/oapi-codegen/nullable"
 
-	"eidng8.cc/microservices/admin-areas/ent"
-	"eidng8.cc/microservices/admin-areas/ent/adminarea"
+	"github.com/eidng8/go-admin-areas/ent"
+	"github.com/eidng8/go-admin-areas/ent/adminarea"
 )
 
 // ReadAdminArea Find a AdminArea by ID

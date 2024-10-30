@@ -8,8 +8,8 @@ import (
 	"github.com/eidng8/go-db"
 	"github.com/gin-gonic/gin"
 
-	"eidng8.cc/microservices/admin-areas/ent"
-	_ "eidng8.cc/microservices/admin-areas/ent/runtime"
+	"github.com/eidng8/go-admin-areas/ent"
+	_ "github.com/eidng8/go-admin-areas/ent/runtime"
 )
 
 func main() {

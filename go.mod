@@ -1,4 +1,4 @@
-module eidng8.cc/microservices/admin-areas
+module github.com/eidng8/go-admin-areas
 
 go 1.23.2
 

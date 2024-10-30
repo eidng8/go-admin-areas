@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"eidng8.cc/microservices/admin-areas/ent/adminarea"
+	"github.com/eidng8/go-admin-areas/ent/adminarea"
 )
 
 func Test_ListAdminArea_should_return_first_page(t *testing.T) {

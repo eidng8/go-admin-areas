@@ -12,7 +12,7 @@
       <env name="LISTEN_ADDR" value="127.0.0.1:48081" />
     </envs>
     <kind value="PACKAGE" />
-    <package value="eidng8.cc/microservices/admin-areas" />
+    <package value="github.com/eidng8/go-admin-areas" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/admin-area/main.go" />
     <method v="2" />

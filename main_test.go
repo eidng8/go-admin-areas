@@ -9,7 +9,7 @@ import (
 	jitr "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
 
-	"eidng8.cc/microservices/admin-areas/ent"
+	"github.com/eidng8/go-admin-areas/ent"
 )
 
 var jsoniter = jitr.ConfigCompatibleWithStandardLibrary

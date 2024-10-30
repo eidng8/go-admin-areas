@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"eidng8.cc/microservices/admin-areas/ent"
+	"github.com/eidng8/go-admin-areas/ent"
 )
 
 type Server struct {

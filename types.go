@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/oapi-codegen/nullable"
 
-	"eidng8.cc/microservices/admin-areas/ent"
+	"github.com/eidng8/go-admin-areas/ent"
 )
 
 func newAdminAreaFromEnt(eaa *ent.AdminArea) *AdminArea {
