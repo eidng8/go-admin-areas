@@ -13,7 +13,18 @@ import (
 )
 
 func main() {
-	ex, err := entoas.NewExtension(
+	oas, err := newOasExtension()
+	if err != nil {
+		log.Fatalf("creating entoas extension: %v", err)
+	}
+	ext := entc.Extensions(oas)
+	if err = entc.Generate("./ent/schema", genConfig(), ext); err != nil {
+		log.Fatalf("running ent codegen: %v", err)
+	}
+}
+
+func newOasExtension() (*entoas.Extension, error) {
+	return entoas.NewExtension(
 		entoas.Mutations(
 			func(g *gen.Graph, s *ogen.Spec) error {
 				constraintRequestBody(s.Paths)
@@ -35,19 +46,15 @@ func main() {
 			},
 		),
 	)
-	if err != nil {
-		log.Fatalf("creating entoas extension: %v", err)
-	}
-	err = entc.Generate(
-		"./ent/schema", &gen.Config{
-			Features: []gen.Feature{
-				gen.FeatureIntercept,
-				gen.FeatureSnapshot,
-			},
-		}, entc.Extensions(ex),
-	)
-	if err != nil {
-		log.Fatalf("running ent codegen: %v", err)
+}
+
+func genConfig() *gen.Config {
+	return &gen.Config{
+		Features: []gen.Feature{
+			gen.FeatureIntercept,
+			gen.FeatureSnapshot,
+			gen.FeatureVersionedMigration,
+		},
 	}
 }
 

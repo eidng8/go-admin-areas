@@ -1,12 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"os"
 
-	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
+	"github.com/eidng8/go-db"
 	"github.com/gin-gonic/gin"
 
 	"eidng8.cc/microservices/admin-areas/ent"
@@ -33,17 +32,7 @@ func main() {
 }
 
 func getEntClient() *ent.Client {
-	var db *sql.DB
-	drv := getenvd("DB_DRIVER", dialect.MySQL)
-	switch {
-	case dialect.MySQL == drv:
-		db = openMysql()
-	case dialect.SQLite == drv:
-		db = openSqlite()
-	case dialect.Postgres == drv:
-		db = openPostgres()
-	}
-	return ent.NewClient(ent.Driver(entsql.OpenDB(drv, db)))
+	return ent.NewClient(ent.Driver(entsql.OpenDB(db.ConnectX())))
 }
 
 func getenv(name string) string {

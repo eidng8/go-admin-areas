@@ -4,11 +4,12 @@
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="-tags=jsoniter" />
     <envs>
-      <env name="DB_ADDR" value="127.0.0.1:43306" />
+      <env name="DB_DRIVER" value="mysql" />
+      <env name="DB_HOST" value="127.0.0.1:43306" />
       <env name="DB_NAME" value="admin_areas" />
       <env name="DB_PASSWORD" value="123456" />
       <env name="DB_USER" value="root" />
-      <env name="LISTEN_ADDR" value=":8081" />
+      <env name="LISTEN_ADDR" value="127.0.0.1:48081" />
     </envs>
     <kind value="PACKAGE" />
     <package value="eidng8.cc/microservices/admin-areas" />
