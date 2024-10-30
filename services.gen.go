@@ -34,7 +34,7 @@ type ServerInterface interface {
 	DeleteAdminArea(c *gin.Context, id int)
 	// Find a AdminArea by ID
 	// (GET /admin-areas/{id})
-	ReadAdminArea(c *gin.Context, id int)
+	ReadAdminArea(c *gin.Context, id int, params ReadAdminAreaParams)
 	// Updates a AdminArea
 	// (PATCH /admin-areas/{id})
 	UpdateAdminArea(c *gin.Context, id int)
@@ -43,7 +43,7 @@ type ServerInterface interface {
 	ListAdminAreaChildren(c *gin.Context, id int, params ListAdminAreaChildrenParams)
 	// Find the attached AdminArea
 	// (GET /admin-areas/{id}/parent)
-	ReadAdminAreaParent(c *gin.Context, id int)
+	ReadAdminAreaParent(c *gin.Context, id int, params ReadAdminAreaParentParams)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -71,11 +71,35 @@ func (siw *ServerInterfaceWrapper) ListAdminArea(c *gin.Context) {
 		return
 	}
 
-	// ------------- Optional query parameter "perPage" -------------
+	// ------------- Optional query parameter "per_page" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "perPage", c.Request.URL.Query(), &params.PerPage)
+	err = runtime.BindQueryParameter("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter perPage: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "name" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "name", c.Request.URL.Query(), &params.Name)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter name: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "abbr" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "abbr", c.Request.URL.Query(), &params.Abbr)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter abbr: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "trashed" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -140,6 +164,17 @@ func (siw *ServerInterfaceWrapper) ReadAdminArea(c *gin.Context) {
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ReadAdminAreaParams
+
+	// ------------- Optional query parameter "trashed" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -147,7 +182,7 @@ func (siw *ServerInterfaceWrapper) ReadAdminArea(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.ReadAdminArea(c, id)
+	siw.Handler.ReadAdminArea(c, id, params)
 }
 
 // UpdateAdminArea operation middleware
@@ -199,11 +234,35 @@ func (siw *ServerInterfaceWrapper) ListAdminAreaChildren(c *gin.Context) {
 		return
 	}
 
-	// ------------- Optional query parameter "perPage" -------------
+	// ------------- Optional query parameter "per_page" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "perPage", c.Request.URL.Query(), &params.PerPage)
+	err = runtime.BindQueryParameter("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter perPage: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "name" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "name", c.Request.URL.Query(), &params.Name)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter name: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "abbr" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "abbr", c.Request.URL.Query(), &params.Abbr)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter abbr: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "trashed" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -231,6 +290,17 @@ func (siw *ServerInterfaceWrapper) ReadAdminAreaParent(c *gin.Context) {
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ReadAdminAreaParentParams
+
+	// ------------- Optional query parameter "trashed" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -238,7 +308,7 @@ func (siw *ServerInterfaceWrapper) ReadAdminAreaParent(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.ReadAdminAreaParent(c, id)
+	siw.Handler.ReadAdminAreaParent(c, id, params)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -278,27 +348,27 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 }
 
 type N400JSONResponse struct {
-	Code   int          `json:"code"`
-	Errors *interface{} `json:"errors,omitempty"`
-	Status string       `json:"status"`
+	Code   int          `json:"code" yaml:"code" xml:"code" bson:"code"`
+	Errors *interface{} `json:"errors,omitempty" yaml:"errors,omitempty" xml:"errors,omitempty" bson:"errors,omitempty"`
+	Status string       `json:"status" yaml:"status" xml:"status" bson:"status"`
 }
 
 type N404JSONResponse struct {
-	Code   int          `json:"code"`
-	Errors *interface{} `json:"errors,omitempty"`
-	Status string       `json:"status"`
+	Code   int          `json:"code" yaml:"code" xml:"code" bson:"code"`
+	Errors *interface{} `json:"errors,omitempty" yaml:"errors,omitempty" xml:"errors,omitempty" bson:"errors,omitempty"`
+	Status string       `json:"status" yaml:"status" xml:"status" bson:"status"`
 }
 
 type N409JSONResponse struct {
-	Code   int          `json:"code"`
-	Errors *interface{} `json:"errors,omitempty"`
-	Status string       `json:"status"`
+	Code   int          `json:"code" yaml:"code" xml:"code" bson:"code"`
+	Errors *interface{} `json:"errors,omitempty" yaml:"errors,omitempty" xml:"errors,omitempty" bson:"errors,omitempty"`
+	Status string       `json:"status" yaml:"status" xml:"status" bson:"status"`
 }
 
 type N500JSONResponse struct {
-	Code   int          `json:"code"`
-	Errors *interface{} `json:"errors,omitempty"`
-	Status string       `json:"status"`
+	Code   int          `json:"code" yaml:"code" xml:"code" bson:"code"`
+	Errors *interface{} `json:"errors,omitempty" yaml:"errors,omitempty" xml:"errors,omitempty" bson:"errors,omitempty"`
+	Status string       `json:"status" yaml:"status" xml:"status" bson:"status"`
 }
 
 type ListAdminAreaRequestObject struct {
@@ -310,18 +380,41 @@ type ListAdminAreaResponseObject interface {
 }
 
 type ListAdminArea200JSONResponse struct {
-	CurrentPage  *int            `json:"current_page,omitempty"`
-	Data         []AdminAreaList `json:"data"`
-	FirstPageUrl *string         `json:"first_page_url,omitempty"`
-	From         int             `json:"from"`
-	LastPage     *int            `json:"last_page,omitempty"`
-	LastPageUrl  *string         `json:"last_page_url,omitempty"`
-	NextPageUrl  *string         `json:"next_page_url,omitempty"`
-	Path         string          `json:"path"`
-	PerPage      *int            `json:"per_page,omitempty"`
-	PrevPageUrl  *string         `json:"prev_page_url,omitempty"`
-	To           int             `json:"to"`
-	Total        int             `json:"total"`
+	// CurrentPage Page number (1-based)
+	CurrentPage int `json:"current_page" yaml:"current_page" xml:"current_page" bson:"current_page"`
+
+	// Data List of administrative areas
+	Data []AdminAreaList `json:"data" yaml:"data" xml:"data" bson:"data"`
+
+	// FirstPageUrl URL to the first page
+	FirstPageUrl string `json:"first_page_url" yaml:"first_page_url" xml:"first_page_url" bson:"first_page_url"`
+
+	// From Index (1-based) of the first item in the current page
+	From int `json:"from" yaml:"from" xml:"from" bson:"from"`
+
+	// LastPage Last page number
+	LastPage int `json:"last_page" yaml:"last_page" xml:"last_page" bson:"last_page"`
+
+	// LastPageUrl URL to the last page
+	LastPageUrl string `json:"last_page_url" yaml:"last_page_url" xml:"last_page_url" bson:"last_page_url"`
+
+	// NextPageUrl URL to the next page
+	NextPageUrl string `json:"next_page_url" yaml:"next_page_url" xml:"next_page_url" bson:"next_page_url"`
+
+	// Path Base path of the request
+	Path string `json:"path" yaml:"path" xml:"path" bson:"path"`
+
+	// PerPage Number of items per page
+	PerPage int `json:"per_page" yaml:"per_page" xml:"per_page" bson:"per_page"`
+
+	// PrevPageUrl URL to the previous page
+	PrevPageUrl string `json:"prev_page_url" yaml:"prev_page_url" xml:"prev_page_url" bson:"prev_page_url"`
+
+	// To Index (1-based) of the last item in the current page
+	To int `json:"to" yaml:"to" xml:"to" bson:"to"`
+
+	// Total Total number of items
+	Total int `json:"total" yaml:"total" xml:"total" bson:"total"`
 }
 
 func (response ListAdminArea200JSONResponse) VisitListAdminAreaResponse(w http.ResponseWriter) error {
@@ -412,7 +505,7 @@ func (response CreateAdminArea500JSONResponse) VisitCreateAdminAreaResponse(w ht
 }
 
 type DeleteAdminAreaRequestObject struct {
-	Id int `json:"id"`
+	Id int `json:"id" yaml:"id" xml:"id" bson:"id"`
 }
 
 type DeleteAdminAreaResponseObject interface {
@@ -464,7 +557,8 @@ func (response DeleteAdminArea500JSONResponse) VisitDeleteAdminAreaResponse(w ht
 }
 
 type ReadAdminAreaRequestObject struct {
-	Id int `json:"id"`
+	Id     int `json:"id" yaml:"id" xml:"id" bson:"id"`
+	Params ReadAdminAreaParams
 }
 
 type ReadAdminAreaResponseObject interface {
@@ -517,7 +611,7 @@ func (response ReadAdminArea500JSONResponse) VisitReadAdminAreaResponse(w http.R
 }
 
 type UpdateAdminAreaRequestObject struct {
-	Id   int `json:"id"`
+	Id   int `json:"id" yaml:"id" xml:"id" bson:"id"`
 	Body *UpdateAdminAreaJSONRequestBody
 }
 
@@ -571,7 +665,7 @@ func (response UpdateAdminArea500JSONResponse) VisitUpdateAdminAreaResponse(w ht
 }
 
 type ListAdminAreaChildrenRequestObject struct {
-	Id     int `json:"id"`
+	Id     int `json:"id" yaml:"id" xml:"id" bson:"id"`
 	Params ListAdminAreaChildrenParams
 }
 
@@ -579,7 +673,43 @@ type ListAdminAreaChildrenResponseObject interface {
 	VisitListAdminAreaChildrenResponse(w http.ResponseWriter) error
 }
 
-type ListAdminAreaChildren200JSONResponse []AdminAreaChildrenList
+type ListAdminAreaChildren200JSONResponse struct {
+	// CurrentPage Page number (1-based)
+	CurrentPage int `json:"current_page" yaml:"current_page" xml:"current_page" bson:"current_page"`
+
+	// Data List of administrative areas
+	Data []AdminAreaList `json:"data" yaml:"data" xml:"data" bson:"data"`
+
+	// FirstPageUrl URL to the first page
+	FirstPageUrl string `json:"first_page_url" yaml:"first_page_url" xml:"first_page_url" bson:"first_page_url"`
+
+	// From Index (1-based) of the first item in the current page
+	From int `json:"from" yaml:"from" xml:"from" bson:"from"`
+
+	// LastPage Last page number
+	LastPage int `json:"last_page" yaml:"last_page" xml:"last_page" bson:"last_page"`
+
+	// LastPageUrl URL to the last page
+	LastPageUrl string `json:"last_page_url" yaml:"last_page_url" xml:"last_page_url" bson:"last_page_url"`
+
+	// NextPageUrl URL to the next page
+	NextPageUrl string `json:"next_page_url" yaml:"next_page_url" xml:"next_page_url" bson:"next_page_url"`
+
+	// Path Base path of the request
+	Path string `json:"path" yaml:"path" xml:"path" bson:"path"`
+
+	// PerPage Number of items per page
+	PerPage int `json:"per_page" yaml:"per_page" xml:"per_page" bson:"per_page"`
+
+	// PrevPageUrl URL to the previous page
+	PrevPageUrl string `json:"prev_page_url" yaml:"prev_page_url" xml:"prev_page_url" bson:"prev_page_url"`
+
+	// To Index (1-based) of the last item in the current page
+	To int `json:"to" yaml:"to" xml:"to" bson:"to"`
+
+	// Total Total number of items
+	Total int `json:"total" yaml:"total" xml:"total" bson:"total"`
+}
 
 func (response ListAdminAreaChildren200JSONResponse) VisitListAdminAreaChildrenResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -625,7 +755,8 @@ func (response ListAdminAreaChildren500JSONResponse) VisitListAdminAreaChildrenR
 }
 
 type ReadAdminAreaParentRequestObject struct {
-	Id int `json:"id"`
+	Id     int `json:"id" yaml:"id" xml:"id" bson:"id"`
+	Params ReadAdminAreaParentParams
 }
 
 type ReadAdminAreaParentResponseObject interface {
@@ -802,10 +933,11 @@ func (sh *strictHandler) DeleteAdminArea(ctx *gin.Context, id int) {
 }
 
 // ReadAdminArea operation middleware
-func (sh *strictHandler) ReadAdminArea(ctx *gin.Context, id int) {
+func (sh *strictHandler) ReadAdminArea(ctx *gin.Context, id int, params ReadAdminAreaParams) {
 	var request ReadAdminAreaRequestObject
 
 	request.Id = id
+	request.Params = params
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.ReadAdminArea(ctx, request.(ReadAdminAreaRequestObject))
@@ -892,10 +1024,11 @@ func (sh *strictHandler) ListAdminAreaChildren(ctx *gin.Context, id int, params 
 }
 
 // ReadAdminAreaParent operation middleware
-func (sh *strictHandler) ReadAdminAreaParent(ctx *gin.Context, id int) {
+func (sh *strictHandler) ReadAdminAreaParent(ctx *gin.Context, id int, params ReadAdminAreaParentParams) {
 	var request ReadAdminAreaParentRequestObject
 
 	request.Id = id
+	request.Params = params
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.ReadAdminAreaParent(ctx, request.(ReadAdminAreaParentRequestObject))
@@ -921,29 +1054,32 @@ func (sh *strictHandler) ReadAdminAreaParent(ctx *gin.Context, id int) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xaTW/bOBP+KwTf96jGbpse6lu22QUC9BC0u3spimAijm12JVIlR06Cwv99MaRkyZb8",
-	"ha1386GDYVEacz74zPDR0D9kavPCGjTk5eSHdOgLazyGwfl4zF+pNYSG+BKKItMpkLZm9M1bw/d8Oscc",
-	"wlOlND+C7NrZAh1pnmcKmcdEFq1bPKdC/qaHAuVEakM4QyeXiUTnrGOZZSI9AZW+JefJaTOTy2UiHX4v",
-	"tUMlJ1/ibCvxr0ktbm+/YUpyyfIKfep0wfYFhQvItBLaFCUlQgGBqO6xEefj8+fquUNvS5eiMJbE1Jam",
-	"cvj9c3U4tWaa6ZS0mYnaec/q3z1feJcG7wtMCZUICsOU0ZOg70Ll2lw4PNYvuL11/L2uLcymPTkgvUAB",
-	"DkGwJC50iKVPxIfPf4oFZCV6mcgc7j+imdFcTt68e5fIXJt6/DqRpswyuM1QTsiVmGzGJpHpXGfKYVgd",
-	"TZgHy/7vcCon8n+jpp6NKodHjbfL1XTgHDyE2RwCobqBgICpdTlfSQWEr0jnHPiOBVqxLDudl3kwurvQ",
-	"Oea2G6pPmIP76ycEwUCOh61EkNyp703P/AW4KikOjmz8yc0hwSkLdWTQN1JCK1nFoJsOSQPvD2FxnyTI",
-	"B1huh+WjwthH7WlA2ICw0yHsE4IaEDYg7HQI+yPoGTA2YOx0GLv5UPH2YcMcoHZiqF0Hm4Z9cwDaCYDG",
-	"stpMe0L5+1x7ob0AI6AkK2Zo0LEh4uL6SrRkRQ4KhS1J2ClL/2pIxHdqoXCqTYArG6mJAy75+ef4/OL6",
-	"SiZygc5HneOz12dj9tkWaKDQciLfno3P3koOGM0DqkfAi/CKYx/GM6Su8VyWxSqF/JkMU7oA8CtVCTQv",
-	"/GE9IEdC5+Xky+Zsd3MgUcAMBVnh0Ch0ksMmJ/J7ie6hDu9EspBMWn22XUu7TDYVacJcpLY01GgSBX/i",
-	"vL0q0V13tMJ91FpDcbsNX5P1PvmbEzYSSxdAH5zZC3sFBMd3xcJ+3NMZm2rno+ab0mU9bcpETp3N18wa",
-	"95mVgT/Ug5XoVpUG7/dIMOz7H6A70IzC4WK3ErL7/SZLkO0T2yg88TdJnRVscryqkRBHIU7xMqxBMKhe",
-	"struRqwahtg1w+Bla8hxq0B04ElCmbVKhsgqIFXnRn3gW+XNiIWak5Z9suetQ4p9su9bzf3dsiwUOuNl",
-	"noN76BZBjivMuL61WuZfGSDW95TQ2G70AoTBu1ZgwCguSV578kKHQuXJOphht8rGOdp1luGBnn6x6uFU",
-	"ZeZR0J6XQk82Mn4Hy+gxNeCJrIgcUbanYr+X/3BrOmjDqLrqO02sOOzx5eDkKR6t38zRLZm+TNbI0+iH",
-	"VssIogypB06X4b4XNMdW/t9pmodbVSqjEleX3dSPPz6YYl1dMntc01TznaqUV3QnkNl1nBzMt7pc53xL",
-	"EjWetr0Ud+BFjJZ64ntDvbbQWtnbB3F1uXWX6OXZv2mjDgJI2DYcUukM7xpdvPD77WNHywnKT3it31l8",
-	"+lHY+rPDk8Ugg+cIABZA6bwLwdjuXUfyGkdJ52BmXMZ2EJU4ySPE38CWnhlbOoIZNQvF2I1toP+GJFVH",
-	"KjutrdpUT7wm9VSTI9jUqP13nu2NKSCCdI5K1KcI+xpUtdyjqEvJT2yP/XstsZ++vR/Xl1o/MOo0qPY3",
-	"JPyz6Uh00X9MhjX/5dpKSEMCrLQ0FWozNRqmOtMLNJF77GCl8SDm5XDT9snTztK/ijVZ8WKIaz/ItkF5",
-	"ufw7AAD//61EJbWeLgAA",
+	"H4sIAAAAAAAC/+xaUW/bNhD+KwS3hw1QY7dNH+q3tNmAAEERpO32UBTBWTzb7CRSJSknQaH/PhwpWbIl",
+	"y3bTrvGqhyC2fDreHb873n3SFx7rNNMKlbN88oUbtJlWFv2X0/GY/sVaOVSOPkKWJTIGJ7UafbJa0TUb",
+	"LzAF+pQZnaFxMtwda4H0391nyCdcKodzNLyIOBqjDckUEbcOXG4bctYZqea8KCJu8HMuDQo++RC0rcQ/",
+	"RpW4nn7C2PGC5AXa2MiMrPMLLiGRgkmV5S5iAhyw8hoZcTo+PWLnDFqdmxiZ0o7NdK5Kn14esU+xVrNE",
+	"xk6qOav8s7T8i6PGYa7wLsPYoWB+Qa8yGOvXOxOpVGcGO0yH6dTQ/3WF/gZpnQEnl8jAIDCSxKX0EbER",
+	"e/32L7aEJEfLI57C3SWquVvwybMXLyKeSlV9fxpxlScJTBPkE2dyjDbdj3i8kIkw6GMsHabesl8NzviE",
+	"/zKqy8eo9GlUO1Ss1IExcO+1GQSH4gb8Ps60SekTF+DwiZMpxbZlgRQkS06neeqNbu9liqluh+oaUzD/",
+	"fIMgKEhxv53wkr3rPevQn4Epob13ZMMtN/sEJ8/EgUHfQL0UvIxBG/FRjeDXfnMfK44H5G1H3qOC0aW0",
+	"bgDRAKIHgegaQQwgGkD0IBC99+sMMBpg9CAY3Vx5m4aSNGDp67BEslLNOkL5biEtk5aBYpA7zeao0JAh",
+	"7OzqgjVkWQoCmc4d0zOS/kM5FuYKJnAmlfQKI+6ko4Bz+v1t+P3s6oJHfInGhjXHJ09PxuSzzlBBJvmE",
+	"Pz8ZnzznFDC38KgeAW3CE4q9/z5H1zaeGj22yhJ7wr1K4wF+IUqBeujx+wEpOqSp/cOmttsFOJbBHJnT",
+	"zKASaDiFjU/45xzNfRXeCSchHjUYg76tLaLNhWgKZrHOlatXYhn9Bb2dS6K5aS8Ld2HZCosHGPEGUqSt",
+	"dAtk0Ab8FjPKNFgzYf+EaFtx1ihJPdZELAbFpsjAV62EGvxuA301/IYG/r1At0BDGyVVnOQCmTNgFyhY",
+	"IDO6zShl1iwp15pqnSAoXhQfo3W+9NnDeKrc+GLjUdJKlSvCtcrTKRr229MnU7AofufRjqIkwMGWtKMq",
+	"0N4oH4+DSB4/rHUQPTNpbHDmJjdJ24j315e0KQQYL1olT6sGz4xO27dfKIF3dSQq7AVVPkGl8lfKsFbq",
+	"V/Ead8UrAbttAy6htLHchZ2xX+na6X8CPe4rvNtTDUluVUOFuX33K7DI6KcqfnQgoU/OtoaqgrW0vAmw",
+	"1LOQUs1S2B+izOByP99IUurcbvXP6b0x4sP91RBx2kGHre/ocpWgVSR2KNuklpsFoFooap4cNTzLtPB+",
+	"t3JtE3ubINoMfImOslzsw2lfwVwq32UkfbXEP5IYbyslq9o5IqH6kcwu2dPGo45dsi8bzw/6ZUnIM/N5",
+	"moK5b3cnFGyYU+PRoOw/Eoq17ehtAhdqGTCFt7UaBkpQglhpnWXSdxDWaQNzbLc/QUezASrz85UW9wcd",
+	"NSCEb/AguWocOjNILEaPcR75WeaGjRLQ0/53mOrx5DQLwxtvqiK/iwe2J3sd/yXl32tiOVweXg6+e4oH",
+	"6zdzdEumF9HaVDP6IkURQJSg64DTub9u/RFTB+NWukXzqEXBLs7bqR9u3nv2uTivTrfmLb6zLWt72dj6",
+	"KXMdJ3sPQu1+93RLEtWeNr1kt2BZiJY48rOh2lto7Oz0nl2cbz0lOgfgP6USewHEHxsGXW4UnRptvFwj",
+	"iMeFlqMaxfaqdZ6/66103ZBvvJ9xtIAnpB6A9gxc3DFvBD59PW3WGqJ4AWpONbOnKwpKHmFpHFqz/1lr",
+	"dkAbVm8UYTeQwT+mIyufWfVaW5LVR16TOqrJAa3bqPli03Z6GpyDmM6o16X4Lpq6knuch/ADSPL/kBgf",
+	"6O+B/h7o74H+Hujvgf4e6O8fSH+3u59DOqz6reat7Ec4MqtV6g51szWqaZG5XKIKs2cPBRLeuBmIkO8y",
+	"YjTfZ+qdM1Yb6zT7aViSbkRvy5ui+DcAAP//vTNvyYQ1AAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

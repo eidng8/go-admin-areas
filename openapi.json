@@ -25,7 +25,7 @@
             }
           },
           {
-            "name": "perPage",
+            "name": "per_page",
             "in": "query",
             "description": "item count to render per page",
             "schema": {
@@ -33,57 +33,96 @@
               "maximum": 255,
               "minimum": 1
             }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Name of the administrative area",
+            "schema": {
+              "type": "string",
+              "maxLength": 255,
+              "minLength": 2
+            }
+          },
+          {
+            "name": "abbr",
+            "in": "query",
+            "description": "Abbreviation of the administrative area, can be a CSV list",
+            "schema": {
+              "type": "string",
+              "maxLength": 255,
+              "minLength": 2
+            }
+          },
+          {
+            "name": "trashed",
+            "in": "query",
+            "description": "Whether to include trashed items",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "result AdminArea list",
+            "description": "Paginated list of administrative areas",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": false,
                   "properties": {
+                    "current_page": {
+                      "description": "Page number (1-based)",
+                      "type": "integer",
+                      "minimum": 1
+                    },
                     "total": {
+                      "description": "Total number of items",
                       "type": "integer",
                       "minimum": 0
                     },
                     "per_page": {
-                      "type": "integer",
-                      "minimum": 1
-                    },
-                    "current_page": {
+                      "description": "Number of items per page",
                       "type": "integer",
                       "minimum": 1
                     },
                     "last_page": {
+                      "description": "Last page number",
                       "type": "integer",
                       "minimum": 1
                     },
                     "from": {
+                      "description": "Index (1-based) of the first item in the current page",
                       "type": "integer",
                       "minimum": 0
                     },
                     "to": {
+                      "description": "Index (1-based) of the last item in the current page",
                       "type": "integer",
                       "minimum": 0
                     },
                     "first_page_url": {
+                      "description": "URL to the first page",
                       "type": "string"
                     },
                     "last_page_url": {
+                      "description": "URL to the last page",
                       "type": "string"
                     },
                     "next_page_url": {
+                      "description": "URL to the next page",
                       "type": "string"
                     },
                     "prev_page_url": {
+                      "description": "URL to the previous page",
                       "type": "string"
                     },
                     "path": {
+                      "description": "Base path of the request",
                       "type": "string"
                     },
                     "data": {
+                      "description": "List of administrative areas",
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/AdminAreaList"
@@ -91,17 +130,16 @@
                     }
                   },
                   "required": [
+                    "current_page",
                     "total",
-                    "page",
-                    "per_age",
-                    "current_age",
-                    "last_age",
+                    "per_page",
+                    "last_page",
                     "from",
                     "to",
-                    "first_age_url",
-                    "last_age_url",
-                    "next_age_url",
-                    "prev_age_url",
+                    "first_page_url",
+                    "last_page_url",
+                    "next_page_url",
+                    "prev_page_url",
                     "path",
                     "data"
                   ]
@@ -136,7 +174,6 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": false,
                 "properties": {
                   "name": {
                     "description": "Administrative area name",
@@ -163,6 +200,7 @@
                     "minimum": 1
                   }
                 },
+                "additionalProperties": false,
                 "required": [
                   "name"
                 ]
@@ -211,6 +249,14 @@
             "schema": {
               "type": "integer",
               "minimum": 1
+            }
+          },
+          {
+            "name": "trashed",
+            "in": "query",
+            "description": "Whether to include trashed items",
+            "schema": {
+              "type": "boolean"
             }
           }
         ],
@@ -301,7 +347,6 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": false,
                 "properties": {
                   "name": {
                     "description": "Administrative area name",
@@ -327,7 +372,8 @@
                     "type": "integer",
                     "minimum": 1
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           },
@@ -387,24 +433,122 @@
             }
           },
           {
-            "name": "perPage",
+            "name": "per_page",
             "in": "query",
             "description": "item count to render per page",
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Name of the administrative area",
+            "schema": {
+              "type": "string",
+              "maxLength": 255,
+              "minLength": 2
+            }
+          },
+          {
+            "name": "abbr",
+            "in": "query",
+            "description": "Abbreviation of the administrative area, can be a CSV list",
+            "schema": {
+              "type": "string",
+              "maxLength": 255,
+              "minLength": 2
+            }
+          },
+          {
+            "name": "trashed",
+            "in": "query",
+            "description": "Whether to include trashed items",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "result AdminAreas list",
+            "description": "Paginated list of administrative areas",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AdminArea_ChildrenList"
-                  }
+                  "type": "object",
+                  "properties": {
+                    "current_page": {
+                      "description": "Page number (1-based)",
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "total": {
+                      "description": "Total number of items",
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "per_page": {
+                      "description": "Number of items per page",
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "last_page": {
+                      "description": "Last page number",
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "from": {
+                      "description": "Index (1-based) of the first item in the current page",
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "to": {
+                      "description": "Index (1-based) of the last item in the current page",
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "first_page_url": {
+                      "description": "URL to the first page",
+                      "type": "string"
+                    },
+                    "last_page_url": {
+                      "description": "URL to the last page",
+                      "type": "string"
+                    },
+                    "next_page_url": {
+                      "description": "URL to the next page",
+                      "type": "string"
+                    },
+                    "prev_page_url": {
+                      "description": "URL to the previous page",
+                      "type": "string"
+                    },
+                    "path": {
+                      "description": "Base path of the request",
+                      "type": "string"
+                    },
+                    "data": {
+                      "description": "List of administrative areas",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AdminAreaList"
+                      }
+                    }
+                  },
+                  "required": [
+                    "current_page",
+                    "total",
+                    "per_page",
+                    "last_page",
+                    "from",
+                    "to",
+                    "first_page_url",
+                    "last_page_url",
+                    "next_page_url",
+                    "prev_page_url",
+                    "path",
+                    "data"
+                  ]
                 }
               }
             }
@@ -442,6 +586,14 @@
               "type": "integer",
               "minimum": 1
             }
+          },
+          {
+            "name": "trashed",
+            "in": "query",
+            "description": "Whether to include trashed items",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -475,7 +627,6 @@
     "schemas": {
       "AdminArea": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "integer",
@@ -530,7 +681,6 @@
       },
       "AdminAreaCreate": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "integer",
@@ -576,7 +726,6 @@
       },
       "AdminAreaList": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "integer",
@@ -622,7 +771,6 @@
       },
       "AdminAreaRead": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "integer",
@@ -668,7 +816,6 @@
       },
       "AdminAreaUpdate": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "integer",
@@ -714,7 +861,6 @@
       },
       "AdminArea_ChildrenList": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "integer",
@@ -760,7 +906,6 @@
       },
       "AdminArea_ParentRead": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "id": {
             "type": "integer",
@@ -812,7 +957,6 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "code": {
                   "type": "integer"
@@ -836,7 +980,6 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "code": {
                   "type": "integer"
@@ -860,7 +1003,6 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "code": {
                   "type": "integer"
@@ -884,7 +1026,6 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "code": {
                   "type": "integer"
@@ -908,7 +1049,6 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
                 "code": {
                   "type": "integer"

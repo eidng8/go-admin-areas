@@ -121,6 +121,5 @@ func (AdminArea) Edges() []ent.Edge {
 func (AdminArea) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		SoftDeleteMixin{},
-		//PaginationMixin{},
 	}
 }

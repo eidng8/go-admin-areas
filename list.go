@@ -25,22 +25,18 @@ func (s Server) ListAdminArea(
 	if err != nil {
 		return nil, err
 	}
-	data := make([]AdminAreaList, len(areas.Data))
-	for i, row := range areas.Data {
-		data[i].FromEnt(row)
-	}
 	return ListAdminArea200JSONResponse{
-		CurrentPage:  &areas.CurrentPage,
-		FirstPageUrl: &areas.FirstPageUrl,
+		CurrentPage:  areas.CurrentPage,
+		FirstPageUrl: areas.FirstPageUrl,
 		From:         areas.From,
-		LastPage:     &areas.LastPage,
-		LastPageUrl:  &areas.LastPageUrl,
-		NextPageUrl:  &areas.NextPageUrl,
+		LastPage:     areas.LastPage,
+		LastPageUrl:  areas.LastPageUrl,
+		NextPageUrl:  areas.NextPageUrl,
 		Path:         areas.Path,
-		PerPage:      &areas.PerPage,
-		PrevPageUrl:  &areas.PrevPageUrl,
+		PerPage:      areas.PerPage,
+		PrevPageUrl:  areas.PrevPageUrl,
 		To:           areas.To,
 		Total:        areas.Total,
-		Data:         data,
+		Data:         mapAdminAreaListFromEnt(areas.Data),
 	}, nil
 }

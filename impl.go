@@ -57,11 +57,11 @@ func (s Server) ReadAdminAreaParent(
 	panic("implement me")
 }
 
+var _ StrictServerInterface = (*Server)(nil)
+
 func NewServer(entClient *ent.Client) Server {
 	return Server{EC: entClient}
 }
-
-var _ StrictServerInterface = (*Server)(nil)
 
 func NewEngine(mode string, entClient *ent.Client) (*gin.Engine, error) {
 	swagger, err := GetSwagger()

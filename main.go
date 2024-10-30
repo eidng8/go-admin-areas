@@ -28,7 +28,7 @@ func main() {
 		}
 	}(entClient)
 	if err := engine.Run(getenv("LISTEN_ADDR")); err != nil {
-		log.Fatalf("Failed to getECS server: %s", err)
+		log.Fatalf("Failed to start server: %s", err)
 	}
 }
 

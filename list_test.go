@@ -22,9 +22,7 @@ func Test_ListAdminArea_should_return_first_page(t *testing.T) {
 		AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
-		aa := AdminArea{}
-		aa.FromEnt(row)
-		list[i] = &aa
+		list[i] = newAdminAreaFromEnt(row)
 	}
 	last := int(math.Ceil(float64(count) / float64(10)))
 	page := paginate.PaginatedList[AdminArea]{
@@ -58,9 +56,7 @@ func Test_ListAdminArea_should_return_fourth_page(t *testing.T) {
 		Offset(30).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
-		aa := AdminArea{}
-		aa.FromEnt(row)
-		list[i] = &aa
+		list[i] = newAdminAreaFromEnt(row)
 	}
 	last := int(math.Ceil(float64(count) / float64(10)))
 	page := paginate.PaginatedList[AdminArea]{
@@ -94,9 +90,7 @@ func Test_ListAdminArea_should_return_fourth_page_5_per_page(t *testing.T) {
 		Offset(15).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
-		aa := AdminArea{}
-		aa.FromEnt(row)
-		list[i] = &aa
+		list[i] = newAdminAreaFromEnt(row)
 	}
 	last := int(math.Ceil(float64(count) / float64(5)))
 	page := paginate.PaginatedList[AdminArea]{
@@ -123,4 +117,18 @@ func Test_ListAdminArea_should_return_fourth_page_5_per_page(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code)
 	actual := response.Body.String()
 	require.JSONEq(t, expected, actual)
+}
+
+func Test_ListAdminArea_should_report_400_for_invalid_page(t *testing.T) {
+	engine, _, response := setupGinTest(t)
+	req, _ := http.NewRequest(http.MethodGet, "/admin-areas?page=a", nil)
+	engine.ServeHTTP(response, req)
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+}
+
+func Test_ListAdminArea_should_report_400_for_invalid_perPage(t *testing.T) {
+	engine, _, response := setupGinTest(t)
+	req, _ := http.NewRequest(http.MethodGet, "/admin-areas?per_page=a", nil)
+	engine.ServeHTTP(response, req)
+	assert.Equal(t, http.StatusBadRequest, response.Code)
 }
