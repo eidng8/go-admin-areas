@@ -6,10 +6,11 @@ require (
 	entgo.io/contrib v0.6.0
 	entgo.io/ent v0.14.1
 	github.com/eidng8/go-db v0.0.1
-	github.com/eidng8/go-paginate v0.0.3
+	github.com/eidng8/go-paginate v0.0.4
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/json-iterator/go v1.1.12
+	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/oapi-codegen/nullable v1.1.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/ogen-go/ogen v1.5.0
