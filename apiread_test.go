@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/oapi-codegen/nullable"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -16,9 +17,10 @@ func Test_ReadAdminArea_should_return_one_record(t *testing.T) {
 	engine, entClient, _ := setupGinTest(t)
 	rec := entClient.AdminArea.Query().Where(adminarea.ID(1)).
 		OnlyX(context.Background())
-	eaa := AdminArea{
+	eaa := ReadAdminArea200JSONResponse{
 		Id:        int(rec.ID),
 		Name:      rec.Name,
+		Abbr:      nullable.NewNullableWithValue(*rec.Abbr),
 		CreatedAt: rec.CreatedAt,
 		UpdatedAt: rec.UpdatedAt,
 	}

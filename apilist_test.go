@@ -55,29 +55,25 @@ func Test_ListAdminArea_should_return_first_page(t *testing.T) {
 
 func Test_ListAdminArea_should_return_fourth_page(t *testing.T) {
 	engine, entClient, response := setupGinTest(t)
-	count := entClient.AdminArea.Query().CountX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
 		Offset(30).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
 	}
-	last := int(math.Ceil(float64(count) / float64(10)))
 	page := paginate.PaginatedList[AdminArea]{
-		Total:        count,
+		Total:        50,
 		PerPage:      10,
 		CurrentPage:  4,
-		LastPage:     last,
+		LastPage:     5,
 		FirstPageUrl: "http://127.0.0.1/admin-areas?page=1&per_page=10",
-		LastPageUrl: fmt.Sprintf(
-			"http://127.0.0.1/admin-areas?page=%d&per_page=10", last,
-		),
-		NextPageUrl: "http://127.0.0.1/admin-areas?page=5&per_page=10",
-		PrevPageUrl: "http://127.0.0.1/admin-areas?page=3&per_page=10",
-		Path:        "http://127.0.0.1/admin-areas",
-		From:        31,
-		To:          40,
-		Data:        list,
+		LastPageUrl:  "http://127.0.0.1/admin-areas?page=5&per_page=10",
+		NextPageUrl:  "http://127.0.0.1/admin-areas?page=5&per_page=10",
+		PrevPageUrl:  "http://127.0.0.1/admin-areas?page=3&per_page=10",
+		Path:         "http://127.0.0.1/admin-areas",
+		From:         31,
+		To:           40,
+		Data:         list,
 	}
 	bytes, err := jsoniter.Marshal(page)
 	assert.Nil(t, err)
