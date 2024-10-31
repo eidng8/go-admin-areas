@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net/http/httptest"
 	"os"
 	"testing"
@@ -15,7 +16,7 @@ import (
 var jsoniter = jitr.ConfigCompatibleWithStandardLibrary
 
 func setupGinTest(tb testing.TB) (
-	*gin.Engine, *ent.Client, *httptest.ResponseRecorder,
+	*gin.Engine, *ent.Tx, *httptest.ResponseRecorder,
 ) {
 	assert.Nil(tb, os.Setenv("DB_DRIVER", "mysql"))
 	assert.Nil(tb, os.Setenv("DB_USER", "root"))
@@ -23,12 +24,15 @@ func setupGinTest(tb testing.TB) (
 	assert.Nil(tb, os.Setenv("DB_HOST", "127.0.0.1:43306"))
 	assert.Nil(tb, os.Setenv("DB_NAME", "admin_areas"))
 	entClient := getEntClient()
+	tx, err := entClient.BeginTx(context.Background(), nil)
+	assert.Nil(tb, err)
 	tb.Cleanup(
 		func() {
-			assert.Nil(tb, entClient.Close())
+			_ = tx.Rollback()
+			_ = entClient.Close()
 		},
 	)
-	engine, err := NewEngine(gin.TestMode, entClient)
+	engine, err := NewEngine(gin.TestMode, tx.Client())
 	assert.Nil(tb, err)
-	return engine, entClient, httptest.NewRecorder()
+	return engine, tx, httptest.NewRecorder()
 }
