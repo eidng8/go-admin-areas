@@ -21,15 +21,6 @@ func (s Server) CreateAdminArea(
 	panic("implement me")
 }
 
-// Deletes a AdminArea by ID
-// (DELETE /admin-areas/{id})
-func (s Server) DeleteAdminArea(
-	ctx context.Context, request DeleteAdminAreaRequestObject,
-) (DeleteAdminAreaResponseObject, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
 // Updates a AdminArea
 // (PATCH /admin-areas/{id})
 func (s Server) UpdateAdminArea(

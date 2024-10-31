@@ -33,8 +33,8 @@ func (SoftDeleteMixin) Fields() []ent.Field {
 
 type softDeleteKey struct{}
 
-// IncludeSoftDeleted returns a new context that skips the soft-delete interceptor/mutators.
-func IncludeSoftDeleted(parent context.Context) context.Context {
+// IncludeTrashed returns a new context that skips the soft-delete interceptor/mutators.
+func IncludeTrashed(parent context.Context) context.Context {
 	return context.WithValue(parent, softDeleteKey{}, true)
 }
 
