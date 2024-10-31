@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"entgo.io/contrib/entoas"
-	// all below are just imported ent files
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema/field"

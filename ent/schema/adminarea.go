@@ -18,7 +18,11 @@ type AdminArea struct {
 
 func (AdminArea) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "admin_areas"},
+		entsql.Annotation{
+			Table:     "admin_areas",
+			Charset:   "utf8mb4",
+			Collation: "utf8mb4_unicode_ci",
+		},
 		entsql.WithComments(true),
 		entsql.OnDelete(entsql.Restrict),
 		schema.Comment("Administrative area table"),
@@ -34,6 +38,14 @@ func (AdminArea) Fields() []ent.Field {
 		field.Uint32("id").Unique().Immutable().Annotations(
 			// adds constraints to the generated OpenAPI specification
 			entoas.Schema(&ogen.Schema{Type: "integer", Minimum: n1}),
+		),
+		field.Uint32("parent_id").Optional().Nillable().Annotations(
+			entoas.Schema(
+				&ogen.Schema{
+					Type:    "integer",
+					Minimum: n1,
+				},
+			),
 		),
 		field.String("name").NotEmpty().MinLen(2).MaxLen(255).
 			Comment("Administrative area name").Annotations(
@@ -60,19 +72,6 @@ func (AdminArea) Fields() []ent.Field {
 				},
 			),
 		),
-		field.Text("memo").Optional().Nillable().Comment("Remarks").
-			Comment("Remarks").Annotations(
-			entoas.Schema(
-				// adds constraints to the generated OpenAPI specification
-				&ogen.Schema{
-					Type:        "string",
-					MinLength:   &u1,
-					MaxLength:   &u255,
-					Nullable:    true,
-					Description: "Remarks",
-				},
-			),
-		),
 		field.Time("created_at").Optional().Nillable().Default(time.Now).
 			Immutable().Annotations(
 			// removes the field from the create & update OpenAPI endpoint
@@ -82,26 +81,6 @@ func (AdminArea) Fields() []ent.Field {
 			Immutable().Annotations(
 			// removes the field from the create & update OpenAPI endpoint
 			entoas.ReadOnly(true),
-		),
-		field.Int("lft").Optional().Nillable().Annotations(
-			// skips the field from OpenAPI specification
-			entoas.Skip(true),
-			// adds constraints to the generated OpenAPI specification
-			entoas.Schema(&ogen.Schema{Type: "integer", Minimum: n1}),
-		),
-		field.Int("rgt").Optional().Nillable().Annotations(
-			// skips the field from OpenAPI specification
-			entoas.Skip(true),
-			// adds constraints to the generated OpenAPI specification
-			entoas.Schema(&ogen.Schema{Type: "integer", Minimum: n1}),
-		),
-		field.Uint32("parent_id").Optional().Nillable().Annotations(
-			entoas.Schema(
-				&ogen.Schema{
-					Type:    "integer",
-					Minimum: n1,
-				},
-			),
 		),
 	}
 }

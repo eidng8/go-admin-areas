@@ -13,9 +13,6 @@ func newAdminAreaFromEnt(eaa *ent.AdminArea) *AdminArea {
 	if eaa.Abbr != nil {
 		aa.Abbr = nullable.NewNullableWithValue(*eaa.Abbr)
 	}
-	if eaa.Memo != nil {
-		aa.Memo = nullable.NewNullableWithValue(*eaa.Memo)
-	}
 	if eaa.ParentID != nil {
 		val := int(*eaa.ParentID)
 		aa.ParentId = &val
@@ -41,9 +38,6 @@ func newAdminAreaListFromEnt(eaa *ent.AdminArea) AdminAreaList {
 	aa.Name = eaa.Name
 	if eaa.Abbr != nil {
 		aa.Abbr = nullable.NewNullableWithValue(*eaa.Abbr)
-	}
-	if eaa.Memo != nil {
-		aa.Memo = nullable.NewNullableWithValue(*eaa.Memo)
 	}
 	if eaa.ParentID != nil {
 		val := int(*eaa.ParentID)
