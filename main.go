@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 
@@ -9,14 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/eidng8/go-admin-areas/ent"
+	"github.com/eidng8/go-admin-areas/ent/migrate"
 	_ "github.com/eidng8/go-admin-areas/ent/runtime"
 )
 
 func main() {
 	entClient := getEntClient()
-	engine, err := NewEngine(
-		getenvd("SERVER_MODE", gin.ReleaseMode), entClient,
-	)
+	mode := getenvd("SERVER_MODE", gin.ReleaseMode)
+	engine, err := NewEngine(mode, entClient)
 	if err != nil {
 		log.Fatalf("Failed to create server: %s", err)
 	}
@@ -26,9 +27,20 @@ func main() {
 			log.Fatalf("Failed to close ent client: %s", err)
 		}
 	}(entClient)
-	if err := engine.Run(getenv("LISTEN_ADDR")); err != nil {
+	err = setup(engine, entClient)
+	if err != nil {
+		return
+	}
+	if err = engine.Run(getenv("LISTEN_ADDR")); err != nil {
 		log.Fatalf("Failed to start server: %s", err)
 	}
+}
+
+func setup(gc *gin.Engine, ec *ent.Client) error {
+	return ec.Schema.Create(
+		context.Background(), migrate.WithDropIndex(true),
+		migrate.WithDropColumn(true), migrate.WithForeignKeys(true),
+	)
 }
 
 func getEntClient() *ent.Client {
