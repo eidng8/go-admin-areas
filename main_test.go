@@ -27,11 +27,8 @@ func setupGinTest(tb testing.TB) (
 	// assert.Nil(tb, os.Setenv("DB_HOST", "127.0.0.1:43306"))
 	// assert.Nil(tb, os.Setenv("DB_NAME", "admin_areas"))
 	entClient := enttest.Open(tb, "sqlite3", ":memory:?_fk=1")
-	// tx, err := entClient.BeginTx(context.Background(), nil)
-	// assert.Nil(tb, err)
 	tb.Cleanup(
 		func() {
-			// _ = tx.Rollback()
 			_ = entClient.Close()
 		},
 	)
