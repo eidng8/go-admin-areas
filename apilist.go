@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
 
@@ -9,6 +11,8 @@ import (
 
 	"github.com/eidng8/go-admin-areas/ent"
 	"github.com/eidng8/go-admin-areas/ent/adminarea"
+	"github.com/eidng8/go-admin-areas/ent/predicate"
+	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
 // ListAdminArea List all AdminAreas
@@ -19,9 +23,10 @@ func (s Server) ListAdminArea(
 	c := ctx.(*gin.Context)
 	pageParams := paginate.GetPaginationParams(c)
 	query := s.EC.AdminArea.Query().Order(adminarea.ByID())
-	areas, err := paginate.GetPage[ent.AdminArea](
-		c, context.Background(), query, pageParams,
-	)
+	qc := newQueryContext(request)
+	applyNameFilter(request, query)
+	applyAbbrFilter(request, query)
+	areas, err := paginate.GetPage[ent.AdminArea](c, qc, query, pageParams)
 	if err != nil {
 		return nil, err
 	}
@@ -39,4 +44,36 @@ func (s Server) ListAdminArea(
 		Total:        areas.Total,
 		Data:         mapAdminAreaListFromEnt(areas.Data),
 	}, nil
+}
+
+func applyNameFilter(
+	request ListAdminAreaRequestObject, query *ent.AdminAreaQuery,
+) {
+	name := request.Params.Name
+	if name != nil && utf8.RuneCountInString(*name) > 1 {
+		query.Where(adminarea.NameHasPrefix(*name))
+	}
+}
+
+func applyAbbrFilter(
+	request ListAdminAreaRequestObject, query *ent.AdminAreaQuery,
+) {
+	abbr := request.Params.Abbr
+	if nil == abbr || "" == *abbr {
+		return
+	}
+	vs := strings.Split(*abbr, ",")
+	cr := make([]predicate.AdminArea, len(vs))
+	for i, a := range vs {
+		cr[i] = adminarea.AbbrContains(a)
+	}
+	query.Where(adminarea.Or(cr...))
+}
+
+func newQueryContext(request ListAdminAreaRequestObject) context.Context {
+	qc := context.Background()
+	if nil != request.Params.Trashed && *request.Params.Trashed {
+		qc = schema.IncludeTrashed(qc)
+	}
+	return qc
 }
