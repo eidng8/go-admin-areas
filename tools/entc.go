@@ -9,6 +9,7 @@ import (
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ogen-go/ogen"
 )
 
@@ -35,6 +36,7 @@ func newOasExtension() (*entoas.Extension, error) {
 				setPaginateResponse(ep.Get)
 				ep = s.Paths["/admin-areas/{id}"]
 				ep.Get.AddParameters(trashedParam())
+				ep.Delete.AddParameters(trashedParam())
 				removeEdges(ep.Patch)
 				ep = s.Paths["/admin-areas/{id}/parent"]
 				ep.Get.AddParameters(trashedParam())
@@ -42,6 +44,8 @@ func newOasExtension() (*entoas.Extension, error) {
 				fixPerPageParamName(ep.Get.Parameters)
 				setPaginateResponse(ep.Get)
 				ep.Get.AddParameters(nameParam(), abbrParam(), trashedParam())
+				s.Paths["/admin-areas/{id}/restore"] = addRestoreEndpoint()
+				addDeletedAtField(s.Components.Schemas["AdminAreaRead"])
 				return nil
 			},
 		),
@@ -263,4 +267,48 @@ func setPaginateResponse(op *ogen.Operation) {
 			},
 		},
 	}
+}
+
+func addRestoreEndpoint() *ogen.PathItem {
+	return &ogen.PathItem{
+		Post: &ogen.Operation{
+			Tags:        []string{"admin-areas"},
+			Summary:     "Restore a trashed administrative area",
+			Description: "Restore a trashed administrative area",
+			OperationID: "restoreAdminArea",
+			Parameters: []*ogen.Parameter{
+				&ogen.Parameter{
+					Name:        "id",
+					In:          openapi3.ParameterInPath,
+					Description: "ID of the AdminArea",
+					Required:    true,
+					Schema: &ogen.Schema{
+						Type:    "integer",
+						Minimum: ogen.Num("1"),
+					},
+				},
+			},
+			Responses: map[string]*ogen.Response{
+				"204": {Description: "AdminArea with requested ID was restored"},
+				"400": {Ref: "#/components/responses/400"},
+				"404": {Ref: "#/components/responses/404"},
+				"409": {Ref: "#/components/responses/409"},
+				"500": {Ref: "#/components/responses/500"},
+			},
+		},
+	}
+}
+
+func addDeletedAtField(schema *ogen.Schema) {
+	schema.Properties = append(
+		schema.Properties, ogen.Property{
+			Name: "deleted_at",
+			Schema: &ogen.Schema{
+				Type:        "string",
+				Format:      "date-time",
+				Nullable:    true,
+				Description: "Date and time when the record was deleted",
+			},
+		},
+	)
 }

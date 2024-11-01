@@ -17,7 +17,7 @@ import (
 func main() {
 	entClient := getEntClient()
 	mode := getenvd("SERVER_MODE", gin.ReleaseMode)
-	engine, err := NewEngine(mode, entClient)
+	engine, err := newEngine(mode, entClient)
 	if err != nil {
 		log.Fatalf("Failed to create server: %s", err)
 	}

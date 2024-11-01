@@ -14,9 +14,13 @@ import (
 func (s Server) ReadAdminArea(
 	ctx context.Context, request ReadAdminAreaRequestObject,
 ) (ReadAdminAreaResponseObject, error) {
+	qc := newQueryContext(request.Params.Trashed, ctx)
 	area, err := s.EC.AdminArea.Query().
-		Where(adminarea.ID(uint32(request.Id))).Only(ctx)
+		Where(adminarea.ID(uint32(request.Id))).Only(qc)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return ReadAdminArea404JSONResponse{}, nil
+		}
 		return nil, err
 	}
 	return newReadAdminArea200JSONResponseFromEnt(area), nil
@@ -32,6 +36,9 @@ func newReadAdminArea200JSONResponseFromEnt(eaa *ent.AdminArea) ReadAdminArea200
 	if eaa.ParentID != nil {
 		val := int(*eaa.ParentID)
 		aa.ParentId = &val
+	}
+	if eaa.DeletedAt != nil {
+		aa.DeletedAt = nullable.NewNullableWithValue(*eaa.DeletedAt)
 	}
 	aa.CreatedAt = eaa.CreatedAt
 	aa.UpdatedAt = eaa.UpdatedAt

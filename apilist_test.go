@@ -16,8 +16,8 @@ import (
 	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
-func Test_ListAdminArea_should_return_1st_page(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_1st_page(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
 	count := entClient.AdminArea.Query().CountX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
 		AllX(context.Background())
@@ -48,14 +48,14 @@ func Test_ListAdminArea_should_return_1st_page(t *testing.T) {
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_4th_page(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_4th_page(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
 		Offset(30).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
@@ -82,14 +82,14 @@ func Test_ListAdminArea_should_return_4th_page(t *testing.T) {
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas?page=4", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_all_records(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_all_records(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
 		AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
@@ -116,14 +116,14 @@ func Test_ListAdminArea_should_return_all_records(t *testing.T) {
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas?per_page=12345", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_2nd_page_exclude_deleted(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_2nd_page_exclude_deleted(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
 	entClient.AdminArea.Delete().
 		Where(adminarea.Or(adminarea.IDIn(5, 3, 21))).
 		ExecX(context.Background())
@@ -154,14 +154,14 @@ func Test_ListAdminArea_should_return_2nd_page_exclude_deleted(t *testing.T) {
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas?page=2", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_2nd_page_include_deleted(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_2nd_page_include_deleted(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
 	entClient.AdminArea.Delete().
 		Where(adminarea.IDIn(5, 3, 11)).
 		ExecX(context.Background())
@@ -193,14 +193,14 @@ func Test_ListAdminArea_should_return_2nd_page_include_deleted(t *testing.T) {
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas?page=2&trashed=1", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_all_records_exclude_deleted(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_all_records_exclude_deleted(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
 	entClient.AdminArea.Delete().
 		Where(adminarea.IDIn(5, 3, 21)).
 		ExecX(context.Background())
@@ -231,14 +231,14 @@ func Test_ListAdminArea_should_return_all_records_exclude_deleted(t *testing.T) 
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas?per_page=12345", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_4th_page_5_per_page(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_4th_page_5_per_page(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(5).
 		Offset(15).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
@@ -266,14 +266,14 @@ func Test_ListAdminArea_should_return_4th_page_5_per_page(t *testing.T) {
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas?page=4&per_page=5", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_specified_name_prefix(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_specified_name_prefix(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
 		Where(adminarea.NameHasPrefix("name 1")).Limit(10).
 		AllX(context.Background())
@@ -301,14 +301,14 @@ func Test_ListAdminArea_should_return_specified_name_prefix(t *testing.T) {
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas?name=name%201", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_specified_abbr_prefix(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_specified_abbr_prefix(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
 		Where(adminarea.AbbrContains("abbr 1")).Limit(10).
 		AllX(context.Background())
@@ -336,14 +336,14 @@ func Test_ListAdminArea_should_return_specified_abbr_prefix(t *testing.T) {
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas?abbr=abbr%201", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
 func Test_ListAdminArea_should_apply_all_filter(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
+	engine, entClient, res := setupGinTest(t)
 	entClient.AdminArea.DeleteOneID(1).ExecX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
 		Where(adminarea.NameHasPrefix("name 1")).
@@ -374,14 +374,14 @@ func Test_ListAdminArea_should_apply_all_filter(t *testing.T) {
 		http.MethodGet,
 		"http://127.0.0.1/admin-areas?name=name+1&abbr=abbr%201", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_no_record(t *testing.T) {
-	engine, _, response := setupGinTest(t)
+func Test_ListAdminArea_should_returns_no_record(t *testing.T) {
+	engine, _, res := setupGinTest(t)
 	page := paginate.PaginatedList[AdminArea]{
 		Total:        0,
 		PerPage:      10,
@@ -403,22 +403,22 @@ func Test_ListAdminArea_should_return_no_record(t *testing.T) {
 		http.MethodGet,
 		"http://127.0.0.1/admin-areas?name=not+exist", nil,
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusOK, response.Code)
-	actual := response.Body.String()
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
 	require.JSONEq(t, expected, actual)
 }
 
 func Test_ListAdminArea_should_report_400_for_invalid_page(t *testing.T) {
-	engine, _, response := setupGinTest(t)
+	engine, _, res := setupGinTest(t)
 	req, _ := http.NewRequest(http.MethodGet, "/admin-areas?page=a", nil)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusBadRequest, response.Code)
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusBadRequest, res.Code)
 }
 
 func Test_ListAdminArea_should_report_400_for_invalid_perPage(t *testing.T) {
-	engine, _, response := setupGinTest(t)
+	engine, _, res := setupGinTest(t)
 	req, _ := http.NewRequest(http.MethodGet, "/admin-areas?per_page=a", nil)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusBadRequest, response.Code)
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusBadRequest, res.Code)
 }

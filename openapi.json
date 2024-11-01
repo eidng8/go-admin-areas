@@ -175,6 +175,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "parent_id": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
                   "name": {
                     "description": "Administrative area name",
                     "type": "string",
@@ -187,17 +191,6 @@
                     "nullable": true,
                     "maxLength": 255,
                     "minLength": 1
-                  },
-                  "memo": {
-                    "description": "Remarks",
-                    "type": "string",
-                    "nullable": true,
-                    "maxLength": 255,
-                    "minLength": 1
-                  },
-                  "parent_id": {
-                    "type": "integer",
-                    "minimum": 1
                   }
                 },
                 "additionalProperties": false,
@@ -302,6 +295,14 @@
               "type": "integer",
               "minimum": 1
             }
+          },
+          {
+            "name": "trashed",
+            "in": "query",
+            "description": "Whether to include trashed items",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -348,6 +349,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "parent_id": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
                   "name": {
                     "description": "Administrative area name",
                     "type": "string",
@@ -360,17 +365,6 @@
                     "nullable": true,
                     "maxLength": 255,
                     "minLength": 1
-                  },
-                  "memo": {
-                    "description": "Remarks",
-                    "type": "string",
-                    "nullable": true,
-                    "maxLength": 255,
-                    "minLength": 1
-                  },
-                  "parent_id": {
-                    "type": "integer",
-                    "minimum": 1
                   }
                 },
                 "additionalProperties": false
@@ -410,8 +404,8 @@
         "tags": [
           "AdminArea"
         ],
-        "summary": "List attached Childrens",
-        "description": "List attached Childrens.",
+        "summary": "List attached Children",
+        "description": "List attached Children.",
         "operationId": "listAdminAreaChildren",
         "parameters": [
           {
@@ -621,6 +615,45 @@
           }
         }
       }
+    },
+    "/admin-areas/{id}/restore": {
+      "post": {
+        "tags": [
+          "admin-areas"
+        ],
+        "summary": "Restore a trashed administrative area",
+        "description": "Restore a trashed administrative area",
+        "operationId": "restoreAdminArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AdminArea",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "AdminArea with requested ID was restored"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -629,6 +662,10 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "parent_id": {
             "type": "integer",
             "minimum": 1
           },
@@ -645,13 +682,6 @@
             "maxLength": 255,
             "minLength": 1
           },
-          "memo": {
-            "description": "Remarks",
-            "type": "string",
-            "nullable": true,
-            "maxLength": 255,
-            "minLength": 1
-          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -659,10 +689,6 @@
           "updated_at": {
             "type": "string",
             "format": "date-time"
-          },
-          "parent_id": {
-            "type": "integer",
-            "minimum": 1
           },
           "parent": {
             "$ref": "#/components/schemas/AdminArea"
@@ -686,6 +712,10 @@
             "type": "integer",
             "minimum": 1
           },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          },
           "name": {
             "description": "Administrative area name",
             "type": "string",
@@ -699,13 +729,6 @@
             "maxLength": 255,
             "minLength": 1
           },
-          "memo": {
-            "description": "Remarks",
-            "type": "string",
-            "nullable": true,
-            "maxLength": 255,
-            "minLength": 1
-          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -713,10 +736,6 @@
           "updated_at": {
             "type": "string",
             "format": "date-time"
-          },
-          "parent_id": {
-            "type": "integer",
-            "minimum": 1
           }
         },
         "required": [
@@ -731,6 +750,10 @@
             "type": "integer",
             "minimum": 1
           },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          },
           "name": {
             "description": "Administrative area name",
             "type": "string",
@@ -744,13 +767,6 @@
             "maxLength": 255,
             "minLength": 1
           },
-          "memo": {
-            "description": "Remarks",
-            "type": "string",
-            "nullable": true,
-            "maxLength": 255,
-            "minLength": 1
-          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -758,10 +774,6 @@
           "updated_at": {
             "type": "string",
             "format": "date-time"
-          },
-          "parent_id": {
-            "type": "integer",
-            "minimum": 1
           }
         },
         "required": [
@@ -776,6 +788,10 @@
             "type": "integer",
             "minimum": 1
           },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          },
           "name": {
             "description": "Administrative area name",
             "type": "string",
@@ -789,13 +805,6 @@
             "maxLength": 255,
             "minLength": 1
           },
-          "memo": {
-            "description": "Remarks",
-            "type": "string",
-            "nullable": true,
-            "maxLength": 255,
-            "minLength": 1
-          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -804,9 +813,11 @@
             "type": "string",
             "format": "date-time"
           },
-          "parent_id": {
-            "type": "integer",
-            "minimum": 1
+          "deleted_at": {
+            "description": "Date and time when the record was deleted",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "required": [
@@ -821,6 +832,10 @@
             "type": "integer",
             "minimum": 1
           },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          },
           "name": {
             "description": "Administrative area name",
             "type": "string",
@@ -834,13 +849,6 @@
             "maxLength": 255,
             "minLength": 1
           },
-          "memo": {
-            "description": "Remarks",
-            "type": "string",
-            "nullable": true,
-            "maxLength": 255,
-            "minLength": 1
-          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -848,10 +856,6 @@
           "updated_at": {
             "type": "string",
             "format": "date-time"
-          },
-          "parent_id": {
-            "type": "integer",
-            "minimum": 1
           }
         },
         "required": [
@@ -866,6 +870,10 @@
             "type": "integer",
             "minimum": 1
           },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          },
           "name": {
             "description": "Administrative area name",
             "type": "string",
@@ -879,13 +887,6 @@
             "maxLength": 255,
             "minLength": 1
           },
-          "memo": {
-            "description": "Remarks",
-            "type": "string",
-            "nullable": true,
-            "maxLength": 255,
-            "minLength": 1
-          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -893,10 +894,6 @@
           "updated_at": {
             "type": "string",
             "format": "date-time"
-          },
-          "parent_id": {
-            "type": "integer",
-            "minimum": 1
           }
         },
         "required": [
@@ -911,6 +908,10 @@
             "type": "integer",
             "minimum": 1
           },
+          "parent_id": {
+            "type": "integer",
+            "minimum": 1
+          },
           "name": {
             "description": "Administrative area name",
             "type": "string",
@@ -924,13 +925,6 @@
             "maxLength": 255,
             "minLength": 1
           },
-          "memo": {
-            "description": "Remarks",
-            "type": "string",
-            "nullable": true,
-            "maxLength": 255,
-            "minLength": 1
-          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -938,10 +932,6 @@
           "updated_at": {
             "type": "string",
             "format": "date-time"
-          },
-          "parent_id": {
-            "type": "integer",
-            "minimum": 1
           }
         },
         "required": [

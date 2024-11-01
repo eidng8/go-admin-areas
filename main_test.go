@@ -32,7 +32,7 @@ func setupGinTest(tb testing.TB) (
 			_ = entClient.Close()
 		},
 	)
-	engine, err := NewEngine(gin.TestMode, entClient)
+	engine, err := newEngine(gin.TestMode, entClient)
 	assert.Nil(tb, err)
 	assert.Nil(tb, setup(engine, entClient))
 	fixture(entClient)

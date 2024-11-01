@@ -12,7 +12,6 @@ import (
 	"github.com/eidng8/go-admin-areas/ent"
 	"github.com/eidng8/go-admin-areas/ent/adminarea"
 	"github.com/eidng8/go-admin-areas/ent/predicate"
-	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
 // ListAdminArea List all AdminAreas
@@ -23,7 +22,7 @@ func (s Server) ListAdminArea(
 	c := ctx.(*gin.Context)
 	pageParams := paginate.GetPaginationParams(c)
 	query := s.EC.AdminArea.Query().Order(adminarea.ByID())
-	qc := newQueryContext(request)
+	qc := newQueryContext(request.Params.Trashed, ctx)
 	applyNameFilter(request, query)
 	applyAbbrFilter(request, query)
 	areas, err := paginate.GetPage[ent.AdminArea](c, qc, query, pageParams)
@@ -68,12 +67,4 @@ func applyAbbrFilter(
 		cr[i] = adminarea.AbbrContains(a)
 	}
 	query.Where(adminarea.Or(cr...))
-}
-
-func newQueryContext(request ListAdminAreaRequestObject) context.Context {
-	qc := context.Background()
-	if nil != request.Params.Trashed && *request.Params.Trashed {
-		qc = schema.IncludeTrashed(qc)
-	}
-	return qc
 }

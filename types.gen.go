@@ -17,9 +17,6 @@ type AdminArea struct {
 	CreatedAt *time.Time                `json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty" bson:"created_at,omitempty"`
 	Id        int                       `json:"id" yaml:"id" xml:"id" bson:"id"`
 
-	// Memo Remarks
-	Memo nullable.Nullable[string] `json:"memo,omitempty" yaml:"memo,omitempty" xml:"memo,omitempty" bson:"memo,omitempty"`
-
 	// Name Administrative area name
 	Name      string     `json:"name" yaml:"name" xml:"name" bson:"name"`
 	Parent    *AdminArea `json:"parent,omitempty" yaml:"parent,omitempty" xml:"parent,omitempty" bson:"parent,omitempty"`
@@ -34,9 +31,6 @@ type AdminAreaCreate struct {
 	CreatedAt *time.Time                `json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty" bson:"created_at,omitempty"`
 	Id        int                       `json:"id" yaml:"id" xml:"id" bson:"id"`
 
-	// Memo Remarks
-	Memo nullable.Nullable[string] `json:"memo,omitempty" yaml:"memo,omitempty" xml:"memo,omitempty" bson:"memo,omitempty"`
-
 	// Name Administrative area name
 	Name      string     `json:"name" yaml:"name" xml:"name" bson:"name"`
 	ParentId  *int       `json:"parent_id,omitempty" yaml:"parent_id,omitempty" xml:"parent_id,omitempty" bson:"parent_id,omitempty"`
@@ -50,9 +44,6 @@ type AdminAreaList struct {
 	CreatedAt *time.Time                `json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty" bson:"created_at,omitempty"`
 	Id        int                       `json:"id" yaml:"id" xml:"id" bson:"id"`
 
-	// Memo Remarks
-	Memo nullable.Nullable[string] `json:"memo,omitempty" yaml:"memo,omitempty" xml:"memo,omitempty" bson:"memo,omitempty"`
-
 	// Name Administrative area name
 	Name      string     `json:"name" yaml:"name" xml:"name" bson:"name"`
 	ParentId  *int       `json:"parent_id,omitempty" yaml:"parent_id,omitempty" xml:"parent_id,omitempty" bson:"parent_id,omitempty"`
@@ -64,10 +55,10 @@ type AdminAreaRead struct {
 	// Abbr Administrative area abbreviations, CSV values
 	Abbr      nullable.Nullable[string] `json:"abbr,omitempty" yaml:"abbr,omitempty" xml:"abbr,omitempty" bson:"abbr,omitempty"`
 	CreatedAt *time.Time                `json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty" bson:"created_at,omitempty"`
-	Id        int                       `json:"id" yaml:"id" xml:"id" bson:"id"`
 
-	// Memo Remarks
-	Memo nullable.Nullable[string] `json:"memo,omitempty" yaml:"memo,omitempty" xml:"memo,omitempty" bson:"memo,omitempty"`
+	// DeletedAt Date and time when the record was deleted
+	DeletedAt nullable.Nullable[time.Time] `json:"deleted_at,omitempty" yaml:"deleted_at,omitempty" xml:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	Id        int                          `json:"id" yaml:"id" xml:"id" bson:"id"`
 
 	// Name Administrative area name
 	Name      string     `json:"name" yaml:"name" xml:"name" bson:"name"`
@@ -82,9 +73,6 @@ type AdminAreaUpdate struct {
 	CreatedAt *time.Time                `json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty" bson:"created_at,omitempty"`
 	Id        int                       `json:"id" yaml:"id" xml:"id" bson:"id"`
 
-	// Memo Remarks
-	Memo nullable.Nullable[string] `json:"memo,omitempty" yaml:"memo,omitempty" xml:"memo,omitempty" bson:"memo,omitempty"`
-
 	// Name Administrative area name
 	Name      string     `json:"name" yaml:"name" xml:"name" bson:"name"`
 	ParentId  *int       `json:"parent_id,omitempty" yaml:"parent_id,omitempty" xml:"parent_id,omitempty" bson:"parent_id,omitempty"`
@@ -97,9 +85,6 @@ type AdminAreaParentRead struct {
 	Abbr      nullable.Nullable[string] `json:"abbr,omitempty" yaml:"abbr,omitempty" xml:"abbr,omitempty" bson:"abbr,omitempty"`
 	CreatedAt *time.Time                `json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty" bson:"created_at,omitempty"`
 	Id        int                       `json:"id" yaml:"id" xml:"id" bson:"id"`
-
-	// Memo Remarks
-	Memo nullable.Nullable[string] `json:"memo,omitempty" yaml:"memo,omitempty" xml:"memo,omitempty" bson:"memo,omitempty"`
 
 	// Name Administrative area name
 	Name      string     `json:"name" yaml:"name" xml:"name" bson:"name"`
@@ -158,12 +143,15 @@ type CreateAdminAreaJSONBody struct {
 	// Abbr Administrative area abbreviations, CSV values
 	Abbr nullable.Nullable[string] `json:"abbr,omitempty" yaml:"abbr,omitempty" xml:"abbr,omitempty" bson:"abbr,omitempty"`
 
-	// Memo Remarks
-	Memo nullable.Nullable[string] `json:"memo,omitempty" yaml:"memo,omitempty" xml:"memo,omitempty" bson:"memo,omitempty"`
-
 	// Name Administrative area name
 	Name     string `json:"name" yaml:"name" xml:"name" bson:"name"`
 	ParentId *int   `json:"parent_id,omitempty" yaml:"parent_id,omitempty" xml:"parent_id,omitempty" bson:"parent_id,omitempty"`
+}
+
+// DeleteAdminAreaParams defines parameters for DeleteAdminArea.
+type DeleteAdminAreaParams struct {
+	// Trashed Whether to include trashed items
+	Trashed *bool `form:"trashed,omitempty" json:"trashed,omitempty" yaml:"trashed,omitempty" xml:"trashed,omitempty" bson:"trashed,omitempty"`
 }
 
 // ReadAdminAreaParams defines parameters for ReadAdminArea.
@@ -176,9 +164,6 @@ type ReadAdminAreaParams struct {
 type UpdateAdminAreaJSONBody struct {
 	// Abbr Administrative area abbreviations, CSV values
 	Abbr nullable.Nullable[string] `json:"abbr,omitempty" yaml:"abbr,omitempty" xml:"abbr,omitempty" bson:"abbr,omitempty"`
-
-	// Memo Remarks
-	Memo nullable.Nullable[string] `json:"memo,omitempty" yaml:"memo,omitempty" xml:"memo,omitempty" bson:"memo,omitempty"`
 
 	// Name Administrative area name
 	Name     *string `json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty" bson:"name,omitempty"`

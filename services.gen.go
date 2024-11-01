@@ -31,19 +31,22 @@ type ServerInterface interface {
 	CreateAdminArea(c *gin.Context)
 	// Deletes a AdminArea by ID
 	// (DELETE /admin-areas/{id})
-	DeleteAdminArea(c *gin.Context, id int)
+	DeleteAdminArea(c *gin.Context, id int, params DeleteAdminAreaParams)
 	// Find a AdminArea by ID
 	// (GET /admin-areas/{id})
 	ReadAdminArea(c *gin.Context, id int, params ReadAdminAreaParams)
 	// Updates a AdminArea
 	// (PATCH /admin-areas/{id})
 	UpdateAdminArea(c *gin.Context, id int)
-	// List attached Childrens
+	// List attached Children
 	// (GET /admin-areas/{id}/children)
 	ListAdminAreaChildren(c *gin.Context, id int, params ListAdminAreaChildrenParams)
 	// Find the attached AdminArea
 	// (GET /admin-areas/{id}/parent)
 	ReadAdminAreaParent(c *gin.Context, id int, params ReadAdminAreaParentParams)
+	// Restore a trashed administrative area
+	// (POST /admin-areas/{id}/restore)
+	RestoreAdminArea(c *gin.Context, id int)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -140,6 +143,17 @@ func (siw *ServerInterfaceWrapper) DeleteAdminArea(c *gin.Context) {
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteAdminAreaParams
+
+	// ------------- Optional query parameter "trashed" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -147,7 +161,7 @@ func (siw *ServerInterfaceWrapper) DeleteAdminArea(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.DeleteAdminArea(c, id)
+	siw.Handler.DeleteAdminArea(c, id, params)
 }
 
 // ReadAdminArea operation middleware
@@ -311,6 +325,30 @@ func (siw *ServerInterfaceWrapper) ReadAdminAreaParent(c *gin.Context) {
 	siw.Handler.ReadAdminAreaParent(c, id, params)
 }
 
+// RestoreAdminArea operation middleware
+func (siw *ServerInterfaceWrapper) RestoreAdminArea(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.RestoreAdminArea(c, id)
+}
+
 // GinServerOptions provides options for the Gin server.
 type GinServerOptions struct {
 	BaseURL      string
@@ -345,6 +383,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.PATCH(options.BaseURL+"/admin-areas/:id", wrapper.UpdateAdminArea)
 	router.GET(options.BaseURL+"/admin-areas/:id/children", wrapper.ListAdminAreaChildren)
 	router.GET(options.BaseURL+"/admin-areas/:id/parent", wrapper.ReadAdminAreaParent)
+	router.POST(options.BaseURL+"/admin-areas/:id/restore", wrapper.RestoreAdminArea)
 }
 
 type N400JSONResponse struct {
@@ -505,7 +544,8 @@ func (response CreateAdminArea500JSONResponse) VisitCreateAdminAreaResponse(w ht
 }
 
 type DeleteAdminAreaRequestObject struct {
-	Id int `json:"id" yaml:"id" xml:"id" bson:"id"`
+	Id     int `json:"id" yaml:"id" xml:"id" bson:"id"`
+	Params DeleteAdminAreaParams
 }
 
 type DeleteAdminAreaResponseObject interface {
@@ -808,6 +848,58 @@ func (response ReadAdminAreaParent500JSONResponse) VisitReadAdminAreaParentRespo
 	return json.NewEncoder(w).Encode(response)
 }
 
+type RestoreAdminAreaRequestObject struct {
+	Id int `json:"id"`
+}
+
+type RestoreAdminAreaResponseObject interface {
+	VisitRestoreAdminAreaResponse(w http.ResponseWriter) error
+}
+
+type RestoreAdminArea204Response struct {
+}
+
+func (response RestoreAdminArea204Response) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type RestoreAdminArea400JSONResponse struct{ N400JSONResponse }
+
+func (response RestoreAdminArea400JSONResponse) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreAdminArea404JSONResponse struct{ N404JSONResponse }
+
+func (response RestoreAdminArea404JSONResponse) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreAdminArea409JSONResponse struct{ N409JSONResponse }
+
+func (response RestoreAdminArea409JSONResponse) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreAdminArea500JSONResponse struct{ N500JSONResponse }
+
+func (response RestoreAdminArea500JSONResponse) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// List AdminAreas
@@ -825,12 +917,15 @@ type StrictServerInterface interface {
 	// Updates a AdminArea
 	// (PATCH /admin-areas/{id})
 	UpdateAdminArea(ctx context.Context, request UpdateAdminAreaRequestObject) (UpdateAdminAreaResponseObject, error)
-	// List attached Childrens
+	// List attached Children
 	// (GET /admin-areas/{id}/children)
 	ListAdminAreaChildren(ctx context.Context, request ListAdminAreaChildrenRequestObject) (ListAdminAreaChildrenResponseObject, error)
 	// Find the attached AdminArea
 	// (GET /admin-areas/{id}/parent)
 	ReadAdminAreaParent(ctx context.Context, request ReadAdminAreaParentRequestObject) (ReadAdminAreaParentResponseObject, error)
+	// Restore a trashed administrative area
+	// (POST /admin-areas/{id}/restore)
+	RestoreAdminArea(ctx context.Context, request RestoreAdminAreaRequestObject) (RestoreAdminAreaResponseObject, error)
 }
 
 type StrictHandlerFunc = strictgin.StrictGinHandlerFunc
@@ -906,10 +1001,11 @@ func (sh *strictHandler) CreateAdminArea(ctx *gin.Context) {
 }
 
 // DeleteAdminArea operation middleware
-func (sh *strictHandler) DeleteAdminArea(ctx *gin.Context, id int) {
+func (sh *strictHandler) DeleteAdminArea(ctx *gin.Context, id int, params DeleteAdminAreaParams) {
 	var request DeleteAdminAreaRequestObject
 
 	request.Id = id
+	request.Params = params
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.DeleteAdminArea(ctx, request.(DeleteAdminAreaRequestObject))
@@ -1044,6 +1140,33 @@ func (sh *strictHandler) ReadAdminAreaParent(ctx *gin.Context, id int, params Re
 		ctx.Status(http.StatusInternalServerError)
 	} else if validResponse, ok := response.(ReadAdminAreaParentResponseObject); ok {
 		if err := validResponse.VisitReadAdminAreaParentResponse(ctx.Writer); err != nil {
+			ctx.Error(err)
+		}
+	} else if response != nil {
+		ctx.Error(fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// RestoreAdminArea operation middleware
+func (sh *strictHandler) RestoreAdminArea(ctx *gin.Context, id int) {
+	var request RestoreAdminAreaRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RestoreAdminArea(ctx, request.(RestoreAdminAreaRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RestoreAdminArea")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		ctx.Error(err)
+		ctx.Status(http.StatusInternalServerError)
+	} else if validResponse, ok := response.(RestoreAdminAreaResponseObject); ok {
+		if err := validResponse.VisitRestoreAdminAreaResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {

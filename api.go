@@ -6,10 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/eidng8/go-admin-areas/ent"
+	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
 type Server struct {
 	EC *ent.Client
+}
+
+func (s Server) RestoreAdminArea(
+	ctx context.Context, request RestoreAdminAreaRequestObject,
+) (RestoreAdminAreaResponseObject, error) {
+	// TODO implement me
+	panic("implement me")
 }
 
 // Create a new AdminArea
@@ -50,11 +58,11 @@ func (s Server) ReadAdminAreaParent(
 
 var _ StrictServerInterface = (*Server)(nil)
 
-func NewServer(entClient *ent.Client) Server {
+func newServer(entClient *ent.Client) Server {
 	return Server{EC: entClient}
 }
 
-func NewEngine(mode string, entClient *ent.Client) (*gin.Engine, error) {
+func newEngine(mode string, entClient *ent.Client) (*gin.Engine, error) {
 	swagger, err := GetSwagger()
 	if err != nil {
 		return nil, err
@@ -69,8 +77,21 @@ func NewEngine(mode string, entClient *ent.Client) (*gin.Engine, error) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	engine := gin.Default()
-	server := NewServer(entClient)
+	server := newServer(entClient)
 	handler := NewStrictHandler(server, []StrictMiddlewareFunc{})
 	RegisterHandlers(engine, handler)
 	return engine, nil
+}
+
+func newQueryContext(withTrashed *bool, ctx context.Context) context.Context {
+	var qc context.Context
+	if nil == ctx {
+		qc = context.Background()
+	} else {
+		qc = ctx
+	}
+	if nil != withTrashed && *withTrashed {
+		qc = schema.IncludeTrashed(qc)
+	}
+	return qc
 }
