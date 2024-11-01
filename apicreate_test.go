@@ -2,45 +2,53 @@ package main
 
 import (
 	"context"
+	"io"
 	"net/http"
+	"strings"
 	"testing"
 
+	"github.com/oapi-codegen/nullable"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
-	"github.com/eidng8/go-admin-areas/ent"
 	"github.com/eidng8/go-admin-areas/ent/adminarea"
-	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
-func Test_DeleteAdminArea_should_delete_by_id(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
-	rec := entClient.AdminArea.Query().Where(adminarea.ID(1)).
-		OnlyX(context.Background())
-	assert.Nil(t, rec.DeletedAt)
-	req, _ := http.NewRequest(http.MethodDelete, "/admin-areas/1", nil)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusNoContent, response.Code)
-	_, err := entClient.AdminArea.Query().Where(adminarea.ID(1)).
-		Only(context.Background())
-	assert.True(t, ent.IsNotFound(err))
-}
-
-func Test_DeleteAdminArea_should_physically_delete_if_requested(t *testing.T) {
-	engine, entClient, response := setupGinTest(t)
-	entClient.AdminArea.DeleteOneID(1).ExecX(context.Background())
+func Test_CreateAdminArea_creates_new_record(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
+	body := `{"name":"test name","abbr":"test abbr","parent_id":1}`
 	req, _ := http.NewRequest(
-		http.MethodDelete, "/admin-areas/1?trashed=1", nil,
+		http.MethodPost, "/admin-areas", io.NopCloser(strings.NewReader(body)),
 	)
-	engine.ServeHTTP(response, req)
-	assert.Equal(t, http.StatusNoContent, response.Code)
-	_, err := entClient.AdminArea.Query().Where(adminarea.ID(1)).
-		Only(schema.IncludeTrashed(context.Background()))
-	assert.True(t, ent.IsNotFound(err))
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusCreated, res.Code)
+	actual := res.Body.String()
+	aa := entClient.AdminArea.Query().Where(adminarea.NameEQ("test name")).
+		Where(adminarea.AbbrEQ("test abbr")).Where(adminarea.ParentIDEQ(1)).
+		OnlyX(context.Background())
+	pid := 1
+	b, err := jsoniter.Marshal(
+		CreateAdminArea201JSONResponse{
+			Id:        51,
+			ParentId:  &pid,
+			Name:      "test name",
+			Abbr:      nullable.NewNullableWithValue("test abbr"),
+			CreatedAt: aa.CreatedAt,
+			UpdatedAt: aa.UpdatedAt,
+		},
+	)
+	assert.Nil(t, err)
+	expected := string(b)
+	require.JSONEq(t, expected, actual)
 }
 
-func Test_DeleteAdminArea_should_returns_404_if_not_found(t *testing.T) {
+func Test_CreateAdminArea_400(t *testing.T) {
 	engine, _, res := setupGinTest(t)
-	req, _ := http.NewRequest(http.MethodDelete, "/admin-areas/987654321", nil)
+	body := `{"name":"a"}`
+	req, _ := http.NewRequest(
+		http.MethodPost, "/admin-areas", io.NopCloser(strings.NewReader(body)),
+	)
 	engine.ServeHTTP(res, req)
-	assert.Equal(t, http.StatusNotFound, res.Code)
+	assert.Equal(t, http.StatusBadRequest, res.Code)
 }
+

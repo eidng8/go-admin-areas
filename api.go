@@ -20,15 +20,6 @@ func (s Server) RestoreAdminArea(
 	panic("implement me")
 }
 
-// Create a new AdminArea
-// (POST /admin-areas)
-func (s Server) CreateAdminArea(
-	ctx context.Context, request CreateAdminAreaRequestObject,
-) (CreateAdminAreaResponseObject, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
 // Updates a AdminArea
 // (PATCH /admin-areas/{id})
 func (s Server) UpdateAdminArea(
