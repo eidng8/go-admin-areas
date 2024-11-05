@@ -65,7 +65,6 @@ func (d SoftDeleteMixin) Hooks() []ent.Hook {
 							return next.Mutate(ctx, m)
 						}
 						mx, ok := m.(interface {
-							Op() ent.Op
 							SetOp(ent.Op)
 							Client() *gen.Client
 							SetDeletedAt(time.Time)
@@ -84,6 +83,28 @@ func (d SoftDeleteMixin) Hooks() []ent.Hook {
 				)
 			},
 			ent.OpDeleteOne|ent.OpDelete,
+		),
+		hook.On(
+			func(next ent.Mutator) ent.Mutator {
+				return ent.MutateFunc(
+					func(ctx context.Context, m ent.Mutation) (
+						ent.Value, error,
+					) {
+						if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
+							return next.Mutate(ctx, m)
+						}
+						mx, ok := m.(interface{ WhereP(...func(*sql.Selector)) })
+						if !ok {
+							return nil, fmt.Errorf(
+								"unexpected mutation type %T %+v", m, m,
+							)
+						}
+						d.P(mx)
+						return next.Mutate(ctx, m)
+					},
+				)
+			},
+			ent.OpUpdateOne|ent.OpUpdate,
 		),
 	}
 }

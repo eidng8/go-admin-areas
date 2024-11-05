@@ -67,9 +67,12 @@ func newQueryContext(withTrashed *bool, ctx context.Context) context.Context {
 
 func handleErrorResponse(ctx *gin.Context, err error) {
 	_ = ctx.Error(err)
-	if ent.IsValidationError(err) {
+	switch {
+	case ent.IsValidationError(err):
 		ctx.Status(http.StatusUnprocessableEntity)
-	} else {
+	case ent.IsNotFound(err):
+		ctx.Status(http.StatusNotFound)
+	default:
 		ctx.Status(http.StatusInternalServerError)
 	}
 }
