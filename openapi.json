@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Ent Schema API",
-    "description": "This is an auto generated API description made out of an Ent schema definition",
-    "version": "0.1.0"
+    "title": "Administrative areas listing API",
+    "description": "This is an API listing administrative areas",
+    "version": "0.0.1"
   },
   "paths": {
     "/admin-areas": {

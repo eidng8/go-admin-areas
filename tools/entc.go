@@ -28,6 +28,7 @@ func newOasExtension() (*entoas.Extension, error) {
 	return entoas.NewExtension(
 		entoas.Mutations(
 			func(g *gen.Graph, s *ogen.Spec) error {
+				genSpec(s)
 				constraintRequestBody(s.Paths)
 				ep := s.Paths["/admin-areas"]
 				fixPerPageParamName(ep.Get.Parameters)
@@ -60,6 +61,12 @@ func genConfig() *gen.Config {
 			gen.FeatureVersionedMigration,
 		},
 	}
+}
+
+func genSpec(s *ogen.Spec) {
+	s.Info.SetTitle("Administrative areas listing API")
+	s.Info.SetDescription("This is an API listing administrative areas")
+	s.Info.SetVersion("0.0.1")
 }
 
 func removeFields(props []ogen.Property, fields ...string) []ogen.Property {
