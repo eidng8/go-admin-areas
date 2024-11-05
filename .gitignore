@@ -3,6 +3,7 @@ ent/*
 ent/migrate/*
 tools/*.gen.go
 
+!ent/errors.go
 !ent/schema/
 !ent/schema/**
 !ent/migrate/

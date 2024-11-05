@@ -13,7 +13,7 @@ import (
 	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
-func Test_ReadAdminArea_should_returns_one_record(t *testing.T) {
+func Test_ReadAdminArea_should_return_one_record(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
 	rec := entClient.AdminArea.Query().Where(adminarea.ID(1)).
 		OnlyX(context.Background())
@@ -65,7 +65,7 @@ func Test_ReadAdminArea_returns_deleted_record_if_requested(t *testing.T) {
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ReadAdminArea_should_returns_404_if_not_found(t *testing.T) {
+func Test_ReadAdminArea_should_return_404_if_not_found(t *testing.T) {
 	engine, _, res := setupGinTest(t)
 	req, _ := http.NewRequest(http.MethodGet, "/admin-areas/987654321", nil)
 	engine.ServeHTTP(res, req)

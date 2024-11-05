@@ -38,7 +38,7 @@ func Test_DeleteAdminArea_should_physically_delete_if_requested(t *testing.T) {
 	assert.True(t, ent.IsNotFound(err))
 }
 
-func Test_DeleteAdminArea_should_returns_404_if_not_found(t *testing.T) {
+func Test_DeleteAdminArea_should_return_404_if_not_found(t *testing.T) {
 	engine, _, res := setupGinTest(t)
 	req, _ := http.NewRequest(http.MethodDelete, "/admin-areas/987654321", nil)
 	engine.ServeHTTP(res, req)

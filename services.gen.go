@@ -40,10 +40,14 @@ type ServerInterface interface {
 	UpdateAdminArea(c *gin.Context, id int)
 	// List attached Children
 	// (GET /admin-areas/{id}/children)
-	ListAdminAreaChildren(c *gin.Context, id int, params ListAdminAreaChildrenParams)
+	ListAdminAreaChildren(
+		c *gin.Context, id int, params ListAdminAreaChildrenParams,
+	)
 	// Find the attached AdminArea
 	// (GET /admin-areas/{id}/parent)
-	ReadAdminAreaParent(c *gin.Context, id int, params ReadAdminAreaParentParams)
+	ReadAdminAreaParent(
+		c *gin.Context, id int, params ReadAdminAreaParentParams,
+	)
 	// Restore a trashed administrative area
 	// (POST /admin-areas/{id}/restore)
 	RestoreAdminArea(c *gin.Context, id int)
@@ -68,41 +72,66 @@ func (siw *ServerInterfaceWrapper) ListAdminArea(c *gin.Context) {
 
 	// ------------- Optional query parameter "page" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "page", c.Request.URL.Query(), &params.Page)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "page", c.Request.URL.Query(), &params.Page,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter page: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	// ------------- Optional query parameter "per_page" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter per_page: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	// ------------- Optional query parameter "name" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "name", c.Request.URL.Query(), &params.Name)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "name", c.Request.URL.Query(), &params.Name,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter name: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter name: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	// ------------- Optional query parameter "abbr" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "abbr", c.Request.URL.Query(), &params.Abbr)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "abbr", c.Request.URL.Query(), &params.Abbr,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter abbr: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter abbr: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	// ------------- Optional query parameter "trashed" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter trashed: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -137,9 +166,15 @@ func (siw *ServerInterfaceWrapper) DeleteAdminArea(c *gin.Context) {
 	// ------------- Path parameter "id" -------------
 	var id int
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions(
+		"simple", "id", c.Param("id"), &id,
+		runtime.BindStyledParameterOptions{Explode: false, Required: true},
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter id: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -148,9 +183,14 @@ func (siw *ServerInterfaceWrapper) DeleteAdminArea(c *gin.Context) {
 
 	// ------------- Optional query parameter "trashed" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter trashed: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -172,9 +212,15 @@ func (siw *ServerInterfaceWrapper) ReadAdminArea(c *gin.Context) {
 	// ------------- Path parameter "id" -------------
 	var id int
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions(
+		"simple", "id", c.Param("id"), &id,
+		runtime.BindStyledParameterOptions{Explode: false, Required: true},
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter id: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -183,9 +229,14 @@ func (siw *ServerInterfaceWrapper) ReadAdminArea(c *gin.Context) {
 
 	// ------------- Optional query parameter "trashed" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter trashed: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -207,9 +258,15 @@ func (siw *ServerInterfaceWrapper) UpdateAdminArea(c *gin.Context) {
 	// ------------- Path parameter "id" -------------
 	var id int
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions(
+		"simple", "id", c.Param("id"), &id,
+		runtime.BindStyledParameterOptions{Explode: false, Required: true},
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter id: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -231,9 +288,15 @@ func (siw *ServerInterfaceWrapper) ListAdminAreaChildren(c *gin.Context) {
 	// ------------- Path parameter "id" -------------
 	var id int
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions(
+		"simple", "id", c.Param("id"), &id,
+		runtime.BindStyledParameterOptions{Explode: false, Required: true},
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter id: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -242,41 +305,66 @@ func (siw *ServerInterfaceWrapper) ListAdminAreaChildren(c *gin.Context) {
 
 	// ------------- Optional query parameter "page" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "page", c.Request.URL.Query(), &params.Page)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "page", c.Request.URL.Query(), &params.Page,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter page: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	// ------------- Optional query parameter "per_page" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter per_page: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	// ------------- Optional query parameter "name" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "name", c.Request.URL.Query(), &params.Name)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "name", c.Request.URL.Query(), &params.Name,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter name: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter name: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	// ------------- Optional query parameter "abbr" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "abbr", c.Request.URL.Query(), &params.Abbr)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "abbr", c.Request.URL.Query(), &params.Abbr,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter abbr: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter abbr: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	// ------------- Optional query parameter "trashed" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter trashed: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -298,9 +386,15 @@ func (siw *ServerInterfaceWrapper) ReadAdminAreaParent(c *gin.Context) {
 	// ------------- Path parameter "id" -------------
 	var id int
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions(
+		"simple", "id", c.Param("id"), &id,
+		runtime.BindStyledParameterOptions{Explode: false, Required: true},
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter id: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -309,9 +403,14 @@ func (siw *ServerInterfaceWrapper) ReadAdminAreaParent(c *gin.Context) {
 
 	// ------------- Optional query parameter "trashed" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
+	err = runtime.BindQueryParameter(
+		"form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed,
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter trashed: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -333,9 +432,15 @@ func (siw *ServerInterfaceWrapper) RestoreAdminArea(c *gin.Context) {
 	// ------------- Path parameter "id" -------------
 	var id int
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions(
+		"simple", "id", c.Param("id"), &id,
+		runtime.BindStyledParameterOptions{Explode: false, Required: true},
+	)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(
+			c, fmt.Errorf("Invalid format for parameter id: %w", err),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -362,7 +467,9 @@ func RegisterHandlers(router gin.IRouter, si ServerInterface) {
 }
 
 // RegisterHandlersWithOptions creates http.Handler with additional options
-func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options GinServerOptions) {
+func RegisterHandlersWithOptions(
+	router gin.IRouter, si ServerInterface, options GinServerOptions,
+) {
 	errorHandler := options.ErrorHandler
 	if errorHandler == nil {
 		errorHandler = func(c *gin.Context, err error, statusCode int) {
@@ -381,9 +488,16 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.DELETE(options.BaseURL+"/admin-areas/:id", wrapper.DeleteAdminArea)
 	router.GET(options.BaseURL+"/admin-areas/:id", wrapper.ReadAdminArea)
 	router.PATCH(options.BaseURL+"/admin-areas/:id", wrapper.UpdateAdminArea)
-	router.GET(options.BaseURL+"/admin-areas/:id/children", wrapper.ListAdminAreaChildren)
-	router.GET(options.BaseURL+"/admin-areas/:id/parent", wrapper.ReadAdminAreaParent)
-	router.POST(options.BaseURL+"/admin-areas/:id/restore", wrapper.RestoreAdminArea)
+	router.GET(
+		options.BaseURL+"/admin-areas/:id/children",
+		wrapper.ListAdminAreaChildren,
+	)
+	router.GET(
+		options.BaseURL+"/admin-areas/:id/parent", wrapper.ReadAdminAreaParent,
+	)
+	router.POST(
+		options.BaseURL+"/admin-areas/:id/restore", wrapper.RestoreAdminArea,
+	)
 }
 
 type N400JSONResponse struct {
@@ -904,34 +1018,52 @@ func (response RestoreAdminArea500JSONResponse) VisitRestoreAdminAreaResponse(w 
 type StrictServerInterface interface {
 	// List AdminAreas
 	// (GET /admin-areas)
-	ListAdminArea(ctx context.Context, request ListAdminAreaRequestObject) (ListAdminAreaResponseObject, error)
+	ListAdminArea(
+		ctx context.Context, request ListAdminAreaRequestObject,
+	) (ListAdminAreaResponseObject, error)
 	// Create a new AdminArea
 	// (POST /admin-areas)
-	CreateAdminArea(ctx context.Context, request CreateAdminAreaRequestObject) (CreateAdminAreaResponseObject, error)
+	CreateAdminArea(
+		ctx context.Context, request CreateAdminAreaRequestObject,
+	) (CreateAdminAreaResponseObject, error)
 	// Deletes a AdminArea by ID
 	// (DELETE /admin-areas/{id})
-	DeleteAdminArea(ctx context.Context, request DeleteAdminAreaRequestObject) (DeleteAdminAreaResponseObject, error)
+	DeleteAdminArea(
+		ctx context.Context, request DeleteAdminAreaRequestObject,
+	) (DeleteAdminAreaResponseObject, error)
 	// Find a AdminArea by ID
 	// (GET /admin-areas/{id})
-	ReadAdminArea(ctx context.Context, request ReadAdminAreaRequestObject) (ReadAdminAreaResponseObject, error)
+	ReadAdminArea(
+		ctx context.Context, request ReadAdminAreaRequestObject,
+	) (ReadAdminAreaResponseObject, error)
 	// Updates a AdminArea
 	// (PATCH /admin-areas/{id})
-	UpdateAdminArea(ctx context.Context, request UpdateAdminAreaRequestObject) (UpdateAdminAreaResponseObject, error)
+	UpdateAdminArea(
+		ctx context.Context, request UpdateAdminAreaRequestObject,
+	) (UpdateAdminAreaResponseObject, error)
 	// List attached Children
 	// (GET /admin-areas/{id}/children)
-	ListAdminAreaChildren(ctx context.Context, request ListAdminAreaChildrenRequestObject) (ListAdminAreaChildrenResponseObject, error)
+	ListAdminAreaChildren(
+		ctx context.Context, request ListAdminAreaChildrenRequestObject,
+	) (ListAdminAreaChildrenResponseObject, error)
 	// Find the attached AdminArea
 	// (GET /admin-areas/{id}/parent)
-	ReadAdminAreaParent(ctx context.Context, request ReadAdminAreaParentRequestObject) (ReadAdminAreaParentResponseObject, error)
+	ReadAdminAreaParent(
+		ctx context.Context, request ReadAdminAreaParentRequestObject,
+	) (ReadAdminAreaParentResponseObject, error)
 	// Restore a trashed administrative area
 	// (POST /admin-areas/{id}/restore)
-	RestoreAdminArea(ctx context.Context, request RestoreAdminAreaRequestObject) (RestoreAdminAreaResponseObject, error)
+	RestoreAdminArea(
+		ctx context.Context, request RestoreAdminAreaRequestObject,
+	) (RestoreAdminAreaResponseObject, error)
 }
 
 type StrictHandlerFunc = strictgin.StrictGinHandlerFunc
 type StrictMiddlewareFunc = strictgin.StrictGinMiddlewareFunc
 
-func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareFunc) ServerInterface {
+func NewStrictHandler(
+	ssi StrictServerInterface, middlewares []StrictMiddlewareFunc,
+) ServerInterface {
 	return &strictHandler{ssi: ssi, middlewares: middlewares}
 }
 
@@ -941,12 +1073,16 @@ type strictHandler struct {
 }
 
 // ListAdminArea operation middleware
-func (sh *strictHandler) ListAdminArea(ctx *gin.Context, params ListAdminAreaParams) {
+func (sh *strictHandler) ListAdminArea(
+	ctx *gin.Context, params ListAdminAreaParams,
+) {
 	var request ListAdminAreaRequestObject
 
 	request.Params = params
 
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+	handler := func(ctx *gin.Context, request interface{}) (
+		interface{}, error,
+	) {
 		return sh.ssi.ListAdminArea(ctx, request.(ListAdminAreaRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
@@ -956,8 +1092,7 @@ func (sh *strictHandler) ListAdminArea(ctx *gin.Context, params ListAdminAreaPar
 	response, err := handler(ctx, request)
 
 	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
+		handleErrorResponse(ctx, err)
 	} else if validResponse, ok := response.(ListAdminAreaResponseObject); ok {
 		if err := validResponse.VisitListAdminAreaResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
@@ -979,8 +1114,12 @@ func (sh *strictHandler) CreateAdminArea(ctx *gin.Context) {
 	}
 	request.Body = &body
 
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateAdminArea(ctx, request.(CreateAdminAreaRequestObject))
+	handler := func(ctx *gin.Context, request interface{}) (
+		interface{}, error,
+	) {
+		return sh.ssi.CreateAdminArea(
+			ctx, request.(CreateAdminAreaRequestObject),
+		)
 	}
 	for _, middleware := range sh.middlewares {
 		handler = middleware(handler, "CreateAdminArea")
@@ -989,8 +1128,7 @@ func (sh *strictHandler) CreateAdminArea(ctx *gin.Context) {
 	response, err := handler(ctx, request)
 
 	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
+		handleErrorResponse(ctx, err)
 	} else if validResponse, ok := response.(CreateAdminAreaResponseObject); ok {
 		if err := validResponse.VisitCreateAdminAreaResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
@@ -1001,14 +1139,20 @@ func (sh *strictHandler) CreateAdminArea(ctx *gin.Context) {
 }
 
 // DeleteAdminArea operation middleware
-func (sh *strictHandler) DeleteAdminArea(ctx *gin.Context, id int, params DeleteAdminAreaParams) {
+func (sh *strictHandler) DeleteAdminArea(
+	ctx *gin.Context, id int, params DeleteAdminAreaParams,
+) {
 	var request DeleteAdminAreaRequestObject
 
 	request.Id = id
 	request.Params = params
 
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteAdminArea(ctx, request.(DeleteAdminAreaRequestObject))
+	handler := func(ctx *gin.Context, request interface{}) (
+		interface{}, error,
+	) {
+		return sh.ssi.DeleteAdminArea(
+			ctx, request.(DeleteAdminAreaRequestObject),
+		)
 	}
 	for _, middleware := range sh.middlewares {
 		handler = middleware(handler, "DeleteAdminArea")
@@ -1017,8 +1161,7 @@ func (sh *strictHandler) DeleteAdminArea(ctx *gin.Context, id int, params Delete
 	response, err := handler(ctx, request)
 
 	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
+		handleErrorResponse(ctx, err)
 	} else if validResponse, ok := response.(DeleteAdminAreaResponseObject); ok {
 		if err := validResponse.VisitDeleteAdminAreaResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
@@ -1029,13 +1172,17 @@ func (sh *strictHandler) DeleteAdminArea(ctx *gin.Context, id int, params Delete
 }
 
 // ReadAdminArea operation middleware
-func (sh *strictHandler) ReadAdminArea(ctx *gin.Context, id int, params ReadAdminAreaParams) {
+func (sh *strictHandler) ReadAdminArea(
+	ctx *gin.Context, id int, params ReadAdminAreaParams,
+) {
 	var request ReadAdminAreaRequestObject
 
 	request.Id = id
 	request.Params = params
 
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+	handler := func(ctx *gin.Context, request interface{}) (
+		interface{}, error,
+	) {
 		return sh.ssi.ReadAdminArea(ctx, request.(ReadAdminAreaRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
@@ -1045,8 +1192,7 @@ func (sh *strictHandler) ReadAdminArea(ctx *gin.Context, id int, params ReadAdmi
 	response, err := handler(ctx, request)
 
 	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
+		handleErrorResponse(ctx, err)
 	} else if validResponse, ok := response.(ReadAdminAreaResponseObject); ok {
 		if err := validResponse.VisitReadAdminAreaResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
@@ -1070,8 +1216,12 @@ func (sh *strictHandler) UpdateAdminArea(ctx *gin.Context, id int) {
 	}
 	request.Body = &body
 
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.UpdateAdminArea(ctx, request.(UpdateAdminAreaRequestObject))
+	handler := func(ctx *gin.Context, request interface{}) (
+		interface{}, error,
+	) {
+		return sh.ssi.UpdateAdminArea(
+			ctx, request.(UpdateAdminAreaRequestObject),
+		)
 	}
 	for _, middleware := range sh.middlewares {
 		handler = middleware(handler, "UpdateAdminArea")
@@ -1080,8 +1230,7 @@ func (sh *strictHandler) UpdateAdminArea(ctx *gin.Context, id int) {
 	response, err := handler(ctx, request)
 
 	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
+		handleErrorResponse(ctx, err)
 	} else if validResponse, ok := response.(UpdateAdminAreaResponseObject); ok {
 		if err := validResponse.VisitUpdateAdminAreaResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
@@ -1092,14 +1241,20 @@ func (sh *strictHandler) UpdateAdminArea(ctx *gin.Context, id int) {
 }
 
 // ListAdminAreaChildren operation middleware
-func (sh *strictHandler) ListAdminAreaChildren(ctx *gin.Context, id int, params ListAdminAreaChildrenParams) {
+func (sh *strictHandler) ListAdminAreaChildren(
+	ctx *gin.Context, id int, params ListAdminAreaChildrenParams,
+) {
 	var request ListAdminAreaChildrenRequestObject
 
 	request.Id = id
 	request.Params = params
 
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.ListAdminAreaChildren(ctx, request.(ListAdminAreaChildrenRequestObject))
+	handler := func(ctx *gin.Context, request interface{}) (
+		interface{}, error,
+	) {
+		return sh.ssi.ListAdminAreaChildren(
+			ctx, request.(ListAdminAreaChildrenRequestObject),
+		)
 	}
 	for _, middleware := range sh.middlewares {
 		handler = middleware(handler, "ListAdminAreaChildren")
@@ -1108,8 +1263,7 @@ func (sh *strictHandler) ListAdminAreaChildren(ctx *gin.Context, id int, params 
 	response, err := handler(ctx, request)
 
 	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
+		handleErrorResponse(ctx, err)
 	} else if validResponse, ok := response.(ListAdminAreaChildrenResponseObject); ok {
 		if err := validResponse.VisitListAdminAreaChildrenResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
@@ -1120,14 +1274,20 @@ func (sh *strictHandler) ListAdminAreaChildren(ctx *gin.Context, id int, params 
 }
 
 // ReadAdminAreaParent operation middleware
-func (sh *strictHandler) ReadAdminAreaParent(ctx *gin.Context, id int, params ReadAdminAreaParentParams) {
+func (sh *strictHandler) ReadAdminAreaParent(
+	ctx *gin.Context, id int, params ReadAdminAreaParentParams,
+) {
 	var request ReadAdminAreaParentRequestObject
 
 	request.Id = id
 	request.Params = params
 
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.ReadAdminAreaParent(ctx, request.(ReadAdminAreaParentRequestObject))
+	handler := func(ctx *gin.Context, request interface{}) (
+		interface{}, error,
+	) {
+		return sh.ssi.ReadAdminAreaParent(
+			ctx, request.(ReadAdminAreaParentRequestObject),
+		)
 	}
 	for _, middleware := range sh.middlewares {
 		handler = middleware(handler, "ReadAdminAreaParent")
@@ -1136,8 +1296,7 @@ func (sh *strictHandler) ReadAdminAreaParent(ctx *gin.Context, id int, params Re
 	response, err := handler(ctx, request)
 
 	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
+		handleErrorResponse(ctx, err)
 	} else if validResponse, ok := response.(ReadAdminAreaParentResponseObject); ok {
 		if err := validResponse.VisitReadAdminAreaParentResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
@@ -1153,8 +1312,12 @@ func (sh *strictHandler) RestoreAdminArea(ctx *gin.Context, id int) {
 
 	request.Id = id
 
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.RestoreAdminArea(ctx, request.(RestoreAdminAreaRequestObject))
+	handler := func(ctx *gin.Context, request interface{}) (
+		interface{}, error,
+	) {
+		return sh.ssi.RestoreAdminArea(
+			ctx, request.(RestoreAdminAreaRequestObject),
+		)
 	}
 	for _, middleware := range sh.middlewares {
 		handler = middleware(handler, "RestoreAdminArea")
@@ -1163,8 +1326,7 @@ func (sh *strictHandler) RestoreAdminArea(ctx *gin.Context, id int) {
 	response, err := handler(ctx, request)
 
 	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
+		handleErrorResponse(ctx, err)
 	} else if validResponse, ok := response.(RestoreAdminAreaResponseObject); ok {
 		if err := validResponse.VisitRestoreAdminAreaResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
@@ -1208,7 +1370,11 @@ var swaggerSpec = []string{
 // GetSwagger returns the content of the embedded swagger specification file
 // or error if failed to decode
 func decodeSpec() ([]byte, error) {
-	zipped, err := base64.StdEncoding.DecodeString(strings.Join(swaggerSpec, ""))
+	zipped, err := base64.StdEncoding.DecodeString(
+		strings.Join(
+			swaggerSpec, "",
+		),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("error base64 decoding spec: %w", err)
 	}
@@ -1255,7 +1421,9 @@ func GetSwagger() (swagger *openapi3.T, err error) {
 
 	loader := openapi3.NewLoader()
 	loader.IsExternalRefsAllowed = true
-	loader.ReadFromURIFunc = func(loader *openapi3.Loader, url *url.URL) ([]byte, error) {
+	loader.ReadFromURIFunc = func(
+		loader *openapi3.Loader, url *url.URL,
+	) ([]byte, error) {
 		pathToFile := url.String()
 		pathToFile = path.Clean(pathToFile)
 		getSpec, ok := resolvePath[pathToFile]

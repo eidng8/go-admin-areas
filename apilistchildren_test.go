@@ -14,24 +14,26 @@ import (
 	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
-func Test_ListAdminArea_should_return_1st_page(t *testing.T) {
+func Test_ListAdminAreaChildren_should_return_1st_page(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
-		AllX(context.Background())
+		Where(adminarea.ParentID(2)).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
 	}
 	page := paginate.PaginatedList[AdminArea]{
-		Total:        50,
+		Total:        48,
 		PerPage:      10,
 		CurrentPage:  1,
 		LastPage:     5,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?page=1&per_page=10",
-		LastPageUrl:  "http://127.0.0.1/admin-areas?page=5&per_page=10",
-		NextPageUrl:  "http://127.0.0.1/admin-areas?page=2&per_page=10",
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?page=1&per_page=10",
+		LastPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=5&per_page=10",
+		NextPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=2&per_page=10",
 		PrevPageUrl:  "",
-		Path:         "http://127.0.0.1/admin-areas",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
 		From:         1,
 		To:           10,
 		Data:         list,
@@ -40,7 +42,7 @@ func Test_ListAdminArea_should_return_1st_page(t *testing.T) {
 	assert.Nil(t, err)
 	expected := string(bytes)
 	req, _ := http.NewRequest(
-		http.MethodGet, "http://127.0.0.1/admin-areas", nil,
+		http.MethodGet, "http://127.0.0.1/admin-areas/2/children", nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -48,24 +50,26 @@ func Test_ListAdminArea_should_return_1st_page(t *testing.T) {
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_4th_page(t *testing.T) {
+func Test_ListAdminAreaChildren_should_return_4th_page(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
-		Offset(30).AllX(context.Background())
+		Offset(30).Where(adminarea.IDGT(2)).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
 	}
 	page := paginate.PaginatedList[AdminArea]{
-		Total:        50,
+		Total:        48,
 		PerPage:      10,
 		CurrentPage:  4,
 		LastPage:     5,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?page=1&per_page=10",
-		LastPageUrl:  "http://127.0.0.1/admin-areas?page=5&per_page=10",
-		NextPageUrl:  "http://127.0.0.1/admin-areas?page=5&per_page=10",
-		PrevPageUrl:  "http://127.0.0.1/admin-areas?page=3&per_page=10",
-		Path:         "http://127.0.0.1/admin-areas",
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?page=1&per_page=10",
+		LastPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=5&per_page=10",
+		NextPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=5&per_page=10",
+		PrevPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=3&per_page=10",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
 		From:         31,
 		To:           40,
 		Data:         list,
@@ -74,7 +78,7 @@ func Test_ListAdminArea_should_return_4th_page(t *testing.T) {
 	assert.Nil(t, err)
 	expected := string(bytes)
 	req, _ := http.NewRequest(
-		http.MethodGet, "http://127.0.0.1/admin-areas?page=4", nil,
+		http.MethodGet, "http://127.0.0.1/admin-areas/2/children?page=4", nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -82,33 +86,36 @@ func Test_ListAdminArea_should_return_4th_page(t *testing.T) {
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_all_records(t *testing.T) {
+func Test_ListAdminAreaChildren_should_return_all_records(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
-		AllX(context.Background())
+		Where(adminarea.IDGT(2)).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
 	}
 	page := paginate.PaginatedList[AdminArea]{
-		Total:        50,
+		Total:        48,
 		PerPage:      12345,
 		CurrentPage:  1,
 		LastPage:     1,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?page=1&per_page=12345",
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?page=1&per_page=12345",
 		LastPageUrl:  "",
 		NextPageUrl:  "",
 		PrevPageUrl:  "",
-		Path:         "http://127.0.0.1/admin-areas",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
 		From:         1,
-		To:           50,
+		To:           48,
 		Data:         list,
 	}
 	bytes, err := jsoniter.Marshal(page)
 	assert.Nil(t, err)
 	expected := string(bytes)
 	req, _ := http.NewRequest(
-		http.MethodGet, "http://127.0.0.1/admin-areas?per_page=12345", nil,
+		http.MethodGet,
+		"http://127.0.0.1/admin-areas/2/children?per_page=12345", nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -116,114 +123,40 @@ func Test_ListAdminArea_should_return_all_records(t *testing.T) {
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_2nd_page_exclude_deleted(t *testing.T) {
+func Test_ListAdminAreaChildren_should_return_2nd_page_exclude_deleted(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
 	entClient.AdminArea.Delete().
 		Where(adminarea.Or(adminarea.IDIn(5, 3, 21))).
 		ExecX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
 		Where(adminarea.And(adminarea.IDNotIn(5, 3, 21))).
-		Offset(10).Limit(10).AllX(context.Background())
-	list := make([]*AdminArea, len(rows))
-	for i, row := range rows {
-		list[i] = newAdminAreaFromEnt(row)
-	}
-	page := paginate.PaginatedList[AdminArea]{
-		Total:        47,
-		PerPage:      10,
-		CurrentPage:  2,
-		LastPage:     5,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?page=1&per_page=10",
-		LastPageUrl:  "http://127.0.0.1/admin-areas?page=5&per_page=10",
-		NextPageUrl:  "http://127.0.0.1/admin-areas?page=3&per_page=10",
-		PrevPageUrl:  "http://127.0.0.1/admin-areas?page=1&per_page=10",
-		Path:         "http://127.0.0.1/admin-areas",
-		From:         11,
-		To:           20,
-		Data:         list,
-	}
-	bytes, err := jsoniter.Marshal(page)
-	assert.Nil(t, err)
-	expected := string(bytes)
-	req, _ := http.NewRequest(
-		http.MethodGet, "http://127.0.0.1/admin-areas?page=2", nil,
-	)
-	engine.ServeHTTP(res, req)
-	assert.Equal(t, http.StatusOK, res.Code)
-	actual := res.Body.String()
-	require.JSONEq(t, expected, actual)
-}
-
-func Test_ListAdminArea_should_return_2nd_page_include_deleted(t *testing.T) {
-	engine, entClient, res := setupGinTest(t)
-	entClient.AdminArea.Delete().
-		Where(adminarea.IDIn(5, 3, 11)).
-		ExecX(context.Background())
-	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
-		Where(adminarea.IDLTE(20)).
-		Offset(10).Limit(10).
-		AllX(schema.IncludeTrashed(context.Background()))
-	list := make([]*AdminArea, len(rows))
-	for i, row := range rows {
-		list[i] = newAdminAreaFromEnt(row)
-	}
-	page := paginate.PaginatedList[AdminArea]{
-		Total:        50,
-		PerPage:      10,
-		CurrentPage:  2,
-		LastPage:     5,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?page=1&per_page=10&trashed=1",
-		LastPageUrl:  "http://127.0.0.1/admin-areas?page=5&per_page=10&trashed=1",
-		NextPageUrl:  "http://127.0.0.1/admin-areas?page=3&per_page=10&trashed=1",
-		PrevPageUrl:  "http://127.0.0.1/admin-areas?page=1&per_page=10&trashed=1",
-		Path:         "http://127.0.0.1/admin-areas",
-		From:         11,
-		To:           20,
-		Data:         list,
-	}
-	bytes, err := jsoniter.Marshal(page)
-	assert.Nil(t, err)
-	expected := string(bytes)
-	req, _ := http.NewRequest(
-		http.MethodGet, "http://127.0.0.1/admin-areas?page=2&trashed=1", nil,
-	)
-	engine.ServeHTTP(res, req)
-	assert.Equal(t, http.StatusOK, res.Code)
-	actual := res.Body.String()
-	require.JSONEq(t, expected, actual)
-}
-
-func Test_ListAdminArea_should_return_all_records_exclude_deleted(t *testing.T) {
-	engine, entClient, res := setupGinTest(t)
-	entClient.AdminArea.Delete().
-		Where(adminarea.IDIn(5, 3, 21)).
-		ExecX(context.Background())
-	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
-		Where(adminarea.IDNotIn(5, 3, 21)).
+		Where(adminarea.IDGT(2)).Offset(10).Limit(10).
 		AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
 	}
 	page := paginate.PaginatedList[AdminArea]{
-		Total:        47,
-		PerPage:      12345,
-		CurrentPage:  1,
-		LastPage:     1,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?page=1&per_page=12345",
-		LastPageUrl:  "",
-		NextPageUrl:  "",
-		PrevPageUrl:  "",
-		Path:         "http://127.0.0.1/admin-areas",
-		From:         1,
-		To:           47,
+		Total:        45,
+		PerPage:      10,
+		CurrentPage:  2,
+		LastPage:     5,
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?page=1&per_page=10",
+		LastPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=5&per_page=10",
+		NextPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=3&per_page=10",
+		PrevPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=1&per_page=10",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
+		From:         11,
+		To:           20,
 		Data:         list,
 	}
 	bytes, err := jsoniter.Marshal(page)
 	assert.Nil(t, err)
 	expected := string(bytes)
 	req, _ := http.NewRequest(
-		http.MethodGet, "http://127.0.0.1/admin-areas?per_page=12345", nil,
+		http.MethodGet, "http://127.0.0.1/admin-areas/2/children?page=2", nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -231,25 +164,107 @@ func Test_ListAdminArea_should_return_all_records_exclude_deleted(t *testing.T) 
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_4th_page_5_per_page(t *testing.T) {
+func Test_ListAdminAreaChildren_should_return_2nd_page_include_deleted(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
-	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(5).
-		Offset(15).AllX(context.Background())
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
+	entClient.AdminArea.Delete().Where(adminarea.IDIn(5, 3, 11)).
+		ExecX(context.Background())
+	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
+		Where(adminarea.IDLTE(22)).Where(adminarea.ParentIDEQ(2)).
+		Offset(10).Limit(10).AllX(schema.IncludeTrashed(context.Background()))
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
 	}
-	last := 10
 	page := paginate.PaginatedList[AdminArea]{
-		Total:        50,
+		Total:        48,
+		PerPage:      10,
+		CurrentPage:  2,
+		LastPage:     5,
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?page=1&per_page=10&trashed=1",
+		LastPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=5&per_page=10&trashed=1",
+		NextPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=3&per_page=10&trashed=1",
+		PrevPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=1&per_page=10&trashed=1",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
+		From:         11,
+		To:           20,
+		Data:         list,
+	}
+	bytes, err := jsoniter.Marshal(page)
+	assert.Nil(t, err)
+	expected := string(bytes)
+	req, _ := http.NewRequest(
+		http.MethodGet,
+		"http://127.0.0.1/admin-areas/2/children?page=2&trashed=1", nil,
+	)
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
+	require.JSONEq(t, expected, actual)
+}
+
+func Test_ListAdminAreaChildren_should_return_all_records_exclude_deleted(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
+	entClient.AdminArea.Delete().Where(adminarea.IDIn(5, 3, 21)).
+		ExecX(context.Background())
+	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
+		Where(adminarea.IDNotIn(5, 3, 21)).Where(adminarea.ParentIDEQ(2)).
+		AllX(context.Background())
+	list := make([]*AdminArea, len(rows))
+	for i, row := range rows {
+		list[i] = newAdminAreaFromEnt(row)
+	}
+	page := paginate.PaginatedList[AdminArea]{
+		Total:        45,
+		PerPage:      12345,
+		CurrentPage:  1,
+		LastPage:     1,
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?page=1&per_page=12345",
+		LastPageUrl:  "",
+		NextPageUrl:  "",
+		PrevPageUrl:  "",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
+		From:         1,
+		To:           45,
+		Data:         list,
+	}
+	bytes, err := jsoniter.Marshal(page)
+	assert.Nil(t, err)
+	expected := string(bytes)
+	req, _ := http.NewRequest(
+		http.MethodGet,
+		"http://127.0.0.1/admin-areas/2/children?per_page=12345", nil,
+	)
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
+	require.JSONEq(t, expected, actual)
+}
+
+func Test_ListAdminAreaChildren_should_return_4th_page_5_per_page(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
+	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
+		Where(adminarea.IDGT(2)).Limit(5).Offset(15).
+		AllX(context.Background())
+	list := make([]*AdminArea, len(rows))
+	for i, row := range rows {
+		list[i] = newAdminAreaFromEnt(row)
+	}
+	page := paginate.PaginatedList[AdminArea]{
+		Total:        48,
 		PerPage:      5,
 		CurrentPage:  4,
-		LastPage:     last,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?page=1&per_page=5",
-		LastPageUrl:  "http://127.0.0.1/admin-areas?page=10&per_page=5",
-		NextPageUrl:  "http://127.0.0.1/admin-areas?page=5&per_page=5",
-		PrevPageUrl:  "http://127.0.0.1/admin-areas?page=3&per_page=5",
-		Path:         "http://127.0.0.1/admin-areas",
+		LastPage:     10,
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?page=1&per_page=5",
+		LastPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=10&per_page=5",
+		NextPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=5&per_page=5",
+		PrevPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=3&per_page=5",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
 		From:         16,
 		To:           20,
 		Data:         list,
@@ -258,7 +273,8 @@ func Test_ListAdminArea_should_return_4th_page_5_per_page(t *testing.T) {
 	assert.Nil(t, err)
 	expected := string(bytes)
 	req, _ := http.NewRequest(
-		http.MethodGet, "http://127.0.0.1/admin-areas?page=4&per_page=5", nil,
+		http.MethodGet,
+		"http://127.0.0.1/admin-areas/2/children?page=4&per_page=5", nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -266,25 +282,27 @@ func Test_ListAdminArea_should_return_4th_page_5_per_page(t *testing.T) {
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_specified_name_prefix(t *testing.T) {
+func Test_ListAdminAreaChildren_should_return_specified_name_prefix(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
-		Where(adminarea.NameHasPrefix("name 1")).Limit(10).
-		AllX(context.Background())
+		Where(adminarea.ParentIDEQ(2)).Where(adminarea.NameHasPrefix("name 1")).
+		Limit(10).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
 	}
 	page := paginate.PaginatedList[AdminArea]{
-		Total:        11,
+		Total:        10,
 		PerPage:      10,
 		CurrentPage:  1,
-		LastPage:     2,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?name=name+1&page=1&per_page=10",
-		LastPageUrl:  "http://127.0.0.1/admin-areas?name=name+1&page=2&per_page=10",
-		NextPageUrl:  "http://127.0.0.1/admin-areas?name=name+1&page=2&per_page=10",
+		LastPage:     1,
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?name=name+1&page=1&per_page=10",
+		LastPageUrl:  "",
+		NextPageUrl:  "",
 		PrevPageUrl:  "",
-		Path:         "http://127.0.0.1/admin-areas",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
 		From:         1,
 		To:           10,
 		Data:         list,
@@ -293,7 +311,8 @@ func Test_ListAdminArea_should_return_specified_name_prefix(t *testing.T) {
 	assert.Nil(t, err)
 	expected := string(bytes)
 	req, _ := http.NewRequest(
-		http.MethodGet, "http://127.0.0.1/admin-areas?name=name%201", nil,
+		http.MethodGet, "http://127.0.0.1/admin-areas/2/children?name=name%201",
+		nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -301,25 +320,27 @@ func Test_ListAdminArea_should_return_specified_name_prefix(t *testing.T) {
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_specified_abbr_prefix(t *testing.T) {
+func Test_ListAdminAreaChildren_should_return_specified_abbr_prefix(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
-		Where(adminarea.AbbrContains("abbr 1")).Limit(10).
-		AllX(context.Background())
+		Where(adminarea.AbbrContains("abbr 1")).Where(adminarea.ParentIDEQ(2)).
+		Limit(10).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
 	}
 	page := paginate.PaginatedList[AdminArea]{
-		Total:        11,
+		Total:        10,
 		PerPage:      10,
 		CurrentPage:  1,
-		LastPage:     2,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?abbr=abbr+1&page=1&per_page=10",
-		LastPageUrl:  "http://127.0.0.1/admin-areas?abbr=abbr+1&page=2&per_page=10",
-		NextPageUrl:  "http://127.0.0.1/admin-areas?abbr=abbr+1&page=2&per_page=10",
+		LastPage:     1,
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?abbr=abbr+1&page=1&per_page=10",
+		LastPageUrl:  "",
+		NextPageUrl:  "",
 		PrevPageUrl:  "",
-		Path:         "http://127.0.0.1/admin-areas",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
 		From:         1,
 		To:           10,
 		Data:         list,
@@ -328,7 +349,8 @@ func Test_ListAdminArea_should_return_specified_abbr_prefix(t *testing.T) {
 	assert.Nil(t, err)
 	expected := string(bytes)
 	req, _ := http.NewRequest(
-		http.MethodGet, "http://127.0.0.1/admin-areas?abbr=abbr%201", nil,
+		http.MethodGet, "http://127.0.0.1/admin-areas/2/children?abbr=abbr%201",
+		nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -336,29 +358,32 @@ func Test_ListAdminArea_should_return_specified_abbr_prefix(t *testing.T) {
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_apply_all_filter(t *testing.T) {
+func Test_ListAdminAreaChildren_should_apply_all_filter(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
-	entClient.AdminArea.DeleteOneID(1).ExecX(context.Background())
-	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
+	entClient.AdminArea.DeleteOneID(11).ExecX(context.Background())
+	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
 		Where(adminarea.NameHasPrefix("name 1")).
 		Where(adminarea.AbbrContains("abbr 1")).
-		AllX(schema.IncludeTrashed(context.Background()))
+		Where(adminarea.ParentIDEQ(2)).
+		Limit(10).AllX(context.Background())
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
 	}
 	page := paginate.PaginatedList[AdminArea]{
-		Total:        11,
+		Total:        9,
 		PerPage:      10,
 		CurrentPage:  1,
-		LastPage:     2,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?abbr=abbr+1&name=name+1&page=1&per_page=10",
-		LastPageUrl:  "http://127.0.0.1/admin-areas?abbr=abbr+1&name=name+1&page=2&per_page=10",
-		NextPageUrl:  "http://127.0.0.1/admin-areas?abbr=abbr+1&name=name+1&page=2&per_page=10",
+		LastPage:     1,
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?abbr=abbr+1&name=name+1&page=1&per_page=10",
+		LastPageUrl:  "",
+		NextPageUrl:  "",
 		PrevPageUrl:  "",
-		Path:         "http://127.0.0.1/admin-areas",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
 		From:         1,
-		To:           10,
+		To:           9,
 		Data:         list,
 	}
 	bytes, err := jsoniter.Marshal(page)
@@ -366,7 +391,8 @@ func Test_ListAdminArea_should_apply_all_filter(t *testing.T) {
 	expected := string(bytes)
 	req, _ := http.NewRequest(
 		http.MethodGet,
-		"http://127.0.0.1/admin-areas?name=name+1&abbr=abbr%201", nil,
+		"http://127.0.0.1/admin-areas/2/children?name=name+1&abbr=abbr%201",
+		nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -374,18 +400,20 @@ func Test_ListAdminArea_should_apply_all_filter(t *testing.T) {
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_return_no_record(t *testing.T) {
-	engine, _, res := setupGinTest(t)
+func Test_ListAdminAreaChildren_should_return_no_record(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
+		SaveX(context.Background())
 	page := paginate.PaginatedList[AdminArea]{
 		Total:        0,
 		PerPage:      10,
 		CurrentPage:  1,
 		LastPage:     1,
-		FirstPageUrl: "http://127.0.0.1/admin-areas?name=not+exist&page=1&per_page=10",
+		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?name=not+exist&page=1&per_page=10",
 		LastPageUrl:  "",
 		NextPageUrl:  "",
 		PrevPageUrl:  "",
-		Path:         "http://127.0.0.1/admin-areas",
+		Path:         "http://127.0.0.1/admin-areas/2/children",
 		From:         0,
 		To:           0,
 		Data:         []*AdminArea{},
@@ -395,7 +423,7 @@ func Test_ListAdminArea_should_return_no_record(t *testing.T) {
 	expected := string(bytes)
 	req, _ := http.NewRequest(
 		http.MethodGet,
-		"http://127.0.0.1/admin-areas?name=not+exist", nil,
+		"http://127.0.0.1/admin-areas/2/children?name=not+exist", nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -403,14 +431,16 @@ func Test_ListAdminArea_should_return_no_record(t *testing.T) {
 	require.JSONEq(t, expected, actual)
 }
 
-func Test_ListAdminArea_should_report_400_for_invalid_page(t *testing.T) {
+func Test_ListAdminAreaChildren_should_report_400_for_invalid_page(t *testing.T) {
 	engine, _, res := setupGinTest(t)
-	req, _ := http.NewRequest(http.MethodGet, "/admin-areas?page=a", nil)
+	req, _ := http.NewRequest(
+		http.MethodGet, "/admin-areas/2/children?page=a", nil,
+	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusBadRequest, res.Code)
 }
 
-func Test_ListAdminArea_should_report_400_for_invalid_perPage(t *testing.T) {
+func Test_ListAdminAreaChildren_should_report_400_for_invalid_perPage(t *testing.T) {
 	engine, _, res := setupGinTest(t)
 	req, _ := http.NewRequest(http.MethodGet, "/admin-areas?per_page=a", nil)
 	engine.ServeHTTP(res, req)

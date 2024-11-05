@@ -42,7 +42,6 @@ func (d SoftDeleteMixin) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		intercept.TraverseFunc(
 			func(ctx context.Context, q intercept.Query) error {
-				// Skip soft-delete, means include soft-deleted entities.
 				if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
 					return nil
 				}
@@ -62,15 +61,14 @@ func (d SoftDeleteMixin) Hooks() []ent.Hook {
 					func(ctx context.Context, m ent.Mutation) (
 						ent.Value, error,
 					) {
-						// Skip soft-delete, means delete the entity permanently.
 						if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
 							return next.Mutate(ctx, m)
 						}
-
 						mx, ok := m.(interface {
+							Op() ent.Op
 							SetOp(ent.Op)
 							Client() *gen.Client
-							SetDeletedAt(time.Time) // That is the line that needs to be updated if you change column name to be deleted_at
+							SetDeletedAt(time.Time)
 							WhereP(...func(*sql.Selector))
 						})
 						if !ok {
