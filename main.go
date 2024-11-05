@@ -37,6 +37,9 @@ func main() {
 }
 
 func setup(gc *gin.Engine, ec *ent.Client) error {
+	// Just make sure we have a basic empty db to work with.
+	// Import data to db to fully use the API.
+	// Or remove this auto-migration and use your own.
 	return ec.Schema.Create(
 		context.Background(), migrate.WithDropIndex(true),
 		migrate.WithDropColumn(true), migrate.WithForeignKeys(true),
