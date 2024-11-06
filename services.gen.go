@@ -20,7 +20,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/oapi-codegen/runtime"
 	strictgin "github.com/oapi-codegen/runtime/strictmiddleware/gin"
+
+	"github.com/eidng8/go-admin-areas/ent"
 )
+
+func handleErrorResponse(ctx *gin.Context, err error) {
+	_ = ctx.Error(err)
+	switch {
+	case ent.IsValidationError(err):
+		ctx.Status(http.StatusUnprocessableEntity)
+	case ent.IsNotFound(err):
+		ctx.Status(http.StatusNotFound)
+	default:
+		ctx.Status(http.StatusInternalServerError)
+	}
+}
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {

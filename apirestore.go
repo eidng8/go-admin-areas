@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 
+	"github.com/eidng8/go-softdelete"
+
 	"github.com/eidng8/go-admin-areas/ent"
-	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
 func (s Server) RestoreAdminArea(
 	ctx context.Context, request RestoreAdminAreaRequestObject,
 ) (RestoreAdminAreaResponseObject, error) {
-	qc := schema.IncludeTrashed(ctx)
+	qc := softdelete.IncludeTrashed(ctx)
 	id := uint32(request.Id)
 	tx, err := s.EC.Tx(qc)
 	if err != nil {

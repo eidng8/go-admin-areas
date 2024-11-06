@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"unicode/utf8"
 
-	"github.com/gin-gonic/gin"
-
+	"entgo.io/ent/dialect/sql"
 	"github.com/eidng8/go-paginate"
+	"github.com/eidng8/go-softdelete"
+	"github.com/gin-gonic/gin"
 
 	"github.com/eidng8/go-admin-areas/ent"
 	"github.com/eidng8/go-admin-areas/ent/adminarea"
@@ -19,15 +21,22 @@ import (
 func (s Server) ListAdminAreaChildren(
 	ctx context.Context, request ListAdminAreaChildrenRequestObject,
 ) (ListAdminAreaChildrenResponseObject, error) {
-	c := ctx.(*gin.Context)
-	pageParams := paginate.GetPaginationParams(c)
-	query := s.EC.AdminArea.Query().Order(adminarea.ByID()).Where(
+	query := s.EC.Debug().AdminArea.Query().Order(adminarea.ByID()).Where(
 		adminarea.HasParentWith(adminarea.ID(uint32(request.Id))),
 	)
-	qc := newQueryContext(request.Params.Trashed, ctx)
+	qc := softdelete.NewSoftDeleteQueryContext(request.Params.Trashed, ctx)
 	applyChildrenNameFilter(request, query)
 	applyChildrenAbbrFilter(request, query)
-	areas, err := paginate.GetPage[ent.AdminArea](c, qc, query, pageParams)
+	return getPage(ctx, qc, query)
+}
+
+func getPage(
+	ctx context.Context, qc context.Context,
+	query *ent.AdminAreaQuery,
+) (ListAdminAreaChildrenResponseObject, error) {
+	gc := ctx.(*gin.Context)
+	pageParams := paginate.GetPaginationParams(gc)
+	areas, err := paginate.GetPage[ent.AdminArea](gc, qc, query, pageParams)
 	if err != nil {
 		return nil, err
 	}
@@ -69,4 +78,26 @@ func applyChildrenAbbrFilter(
 		cr[i] = adminarea.AbbrContains(a)
 	}
 	query.Where(adminarea.Or(cr...))
+}
+
+func descendantsQuery(query *ent.AdminAreaQuery) *ent.AdminAreaQuery {
+	return query.Where(
+		func(stmt *sql.Selector) {
+			child := sql.Table(adminarea.Table)
+			parent := sql.Table(adminarea.Table)
+			view := fmt.Sprintf("%s_tree", adminarea.Table)
+			keys := []string{adminarea.FieldID, adminarea.FieldParentID}
+			cte := sql.WithRecursive(view, keys...)
+			pid := cte.C(adminarea.FieldID)
+			cte.As(
+				sql.Select(parent.Columns(keys...)...).From(child).
+					Where(sql.IsNull(parent.C(adminarea.FieldParentID))).
+					UnionAll(
+						sql.Select(child.Columns(keys...)...).From(child).
+							Join(cte).On(child.C(adminarea.FieldParentID), pid),
+					),
+			)
+			stmt.Prefix(cte).Join(cte).On(stmt.C(adminarea.FieldID), pid)
+		},
+	)
 }

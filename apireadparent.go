@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/eidng8/go-softdelete"
 	"github.com/oapi-codegen/nullable"
 
 	"github.com/eidng8/go-admin-areas/ent"
@@ -14,7 +15,7 @@ import (
 func (s Server) ReadAdminAreaParent(
 	ctx context.Context, request ReadAdminAreaParentRequestObject,
 ) (ReadAdminAreaParentResponseObject, error) {
-	qc := newQueryContext(request.Params.Trashed, ctx)
+	qc := softdelete.NewSoftDeleteQueryContext(request.Params.Trashed, ctx)
 	area, err := s.EC.AdminArea.Query().Where(adminarea.ID(uint32(request.Id))).
 		WithParent().Only(qc)
 	if err != nil {

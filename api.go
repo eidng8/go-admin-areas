@@ -1,13 +1,9 @@
 package main
 
 import (
-	"context"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/eidng8/go-admin-areas/ent"
-	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
 type Server struct {
@@ -50,29 +46,4 @@ func newEngine(mode string, entClient *ent.Client) (*gin.Engine, error) {
 		},
 	)
 	return engine, nil
-}
-
-func newQueryContext(withTrashed *bool, ctx context.Context) context.Context {
-	var qc context.Context
-	if nil == ctx {
-		qc = context.Background()
-	} else {
-		qc = ctx
-	}
-	if nil != withTrashed && *withTrashed {
-		qc = schema.IncludeTrashed(qc)
-	}
-	return qc
-}
-
-func handleErrorResponse(ctx *gin.Context, err error) {
-	_ = ctx.Error(err)
-	switch {
-	case ent.IsValidationError(err):
-		ctx.Status(http.StatusUnprocessableEntity)
-	case ent.IsNotFound(err):
-		ctx.Status(http.StatusNotFound)
-	default:
-		ctx.Status(http.StatusInternalServerError)
-	}
 }

@@ -6,12 +6,12 @@ import (
 	"testing"
 
 	"github.com/eidng8/go-paginate"
+	"github.com/eidng8/go-softdelete"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/eidng8/go-admin-areas/ent/adminarea"
-	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
 func Test_ListAdminArea_should_return_1st_page(t *testing.T) {
@@ -162,7 +162,7 @@ func Test_ListAdminArea_should_return_2nd_page_include_deleted(t *testing.T) {
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
 		Where(adminarea.IDLTE(20)).
 		Offset(10).Limit(10).
-		AllX(schema.IncludeTrashed(context.Background()))
+		AllX(softdelete.IncludeTrashed(context.Background()))
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)
@@ -342,7 +342,7 @@ func Test_ListAdminArea_should_apply_all_filter(t *testing.T) {
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).Limit(10).
 		Where(adminarea.NameHasPrefix("name 1")).
 		Where(adminarea.AbbrContains("abbr 1")).
-		AllX(schema.IncludeTrashed(context.Background()))
+		AllX(softdelete.IncludeTrashed(context.Background()))
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)

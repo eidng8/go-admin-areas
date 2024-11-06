@@ -30,6 +30,8 @@ func newOasExtension() (*entoas.Extension, error) {
 			func(g *gen.Graph, s *ogen.Spec) error {
 				genSpec(s)
 				constraintRequestBody(s.Paths)
+				addDeletedAtField(s.Components.Schemas["AdminAreaRead"])
+				s.Paths["/admin-areas/{id}/restore"] = addRestoreEndpoint()
 				ep := s.Paths["/admin-areas"]
 				fixPerPageParamName(ep.Get.Parameters)
 				ep.Get.AddParameters(nameParam(), abbrParam(), trashedParam())
@@ -44,9 +46,9 @@ func newOasExtension() (*entoas.Extension, error) {
 				ep = s.Paths["/admin-areas/{id}/children"]
 				fixPerPageParamName(ep.Get.Parameters)
 				setPaginateResponse(ep.Get)
-				ep.Get.AddParameters(nameParam(), abbrParam(), trashedParam())
-				s.Paths["/admin-areas/{id}/restore"] = addRestoreEndpoint()
-				addDeletedAtField(s.Components.Schemas["AdminAreaRead"])
+				ep.Get.AddParameters(
+					nameParam(), abbrParam(), trashedParam(), recurseParam(),
+				)
 				return nil
 			},
 		),
@@ -58,6 +60,7 @@ func genConfig() *gen.Config {
 		Features: []gen.Feature{
 			gen.FeatureIntercept,
 			gen.FeatureSnapshot,
+			gen.FeatureExecQuery,
 			gen.FeatureVersionedMigration,
 		},
 	}
@@ -149,6 +152,16 @@ func trashedParam() *ogen.Parameter {
 		Name:        "trashed",
 		In:          "query",
 		Description: "Whether to include trashed items",
+		Required:    false,
+		Schema:      &ogen.Schema{Type: "boolean"},
+	}
+}
+
+func recurseParam() *ogen.Parameter {
+	return &ogen.Parameter{
+		Name:        "recurse",
+		In:          "query",
+		Description: "Whether to return all descendants (recurse to last leaf)",
 		Required:    false,
 		Schema:      &ogen.Schema{Type: "boolean"},
 	}

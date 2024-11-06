@@ -5,6 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/eidng8/go-softdelete"
 	"github.com/gin-gonic/gin"
 
 	"github.com/eidng8/go-paginate"
@@ -22,7 +23,7 @@ func (s Server) ListAdminArea(
 	c := ctx.(*gin.Context)
 	pageParams := paginate.GetPaginationParams(c)
 	query := s.EC.AdminArea.Query().Order(adminarea.ByID())
-	qc := newQueryContext(request.Params.Trashed, ctx)
+	qc := softdelete.NewSoftDeleteQueryContext(request.Params.Trashed, ctx)
 	applyNameFilter(request, query)
 	applyAbbrFilter(request, query)
 	areas, err := paginate.GetPage[ent.AdminArea](c, qc, query, pageParams)

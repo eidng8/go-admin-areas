@@ -9,7 +9,11 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/eidng8/go-softdelete"
 	"github.com/ogen-go/ogen"
+
+	gen "github.com/eidng8/go-admin-areas/ent"
+	"github.com/eidng8/go-admin-areas/ent/intercept"
 )
 
 type AdminArea struct {
@@ -99,6 +103,21 @@ func (AdminArea) Edges() []ent.Edge {
 
 func (AdminArea) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		SoftDeleteMixin{},
+		// Comment out this when running `go generate` for the first time
+		softdelete.SoftDeleteMixin{},
+	}
+}
+
+func (AdminArea) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		// Comment out this when running `go generate` for the first time
+		softdelete.SoftDeleteInterceptor(intercept.NewQuery),
+	}
+}
+
+func (AdminArea) Hooks() []ent.Hook {
+	return []ent.Hook{
+		// Comment out this when running `go generate` for the first time
+		softdelete.SoftDeleteMutator[*gen.Client](),
 	}
 }

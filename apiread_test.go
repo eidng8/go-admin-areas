@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/eidng8/go-softdelete"
 	"github.com/oapi-codegen/nullable"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/eidng8/go-admin-areas/ent/adminarea"
-	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
 func Test_ReadAdminArea_should_return_one_record(t *testing.T) {
@@ -46,7 +46,7 @@ func Test_ReadAdminArea_returns_deleted_record_if_requested(t *testing.T) {
 	engine, entClient, res := setupGinTest(t)
 	entClient.AdminArea.DeleteOneID(1).ExecX(context.Background())
 	rec := entClient.AdminArea.Query().Where(adminarea.ID(1)).
-		OnlyX(schema.IncludeTrashed(context.Background()))
+		OnlyX(softdelete.IncludeTrashed(context.Background()))
 	eaa := ReadAdminArea200JSONResponse{
 		Id:        int(rec.ID),
 		Name:      rec.Name,

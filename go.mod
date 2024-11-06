@@ -7,6 +7,7 @@ require (
 	entgo.io/ent v0.14.1
 	github.com/eidng8/go-db v0.0.1
 	github.com/eidng8/go-paginate v0.0.6
+	github.com/eidng8/go-softdelete v0.0.1
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/json-iterator/go v1.1.12

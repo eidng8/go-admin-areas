@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/eidng8/go-softdelete"
 	"github.com/oapi-codegen/nullable"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/eidng8/go-admin-areas/ent/adminarea"
-	"github.com/eidng8/go-admin-areas/ent/schema"
 )
 
 func Test_ReadAdminAreaParent_should_return_one_record(t *testing.T) {
@@ -56,7 +56,7 @@ func Test_ReadAdminAreaParent_returns_deleted_record_if_requested(t *testing.T) 
 	engine, entClient, res := setupGinTest(t)
 	entClient.AdminArea.UpdateOneID(uint32(2)).SetParentID(1).
 		SetDeletedAt(time.Now()).
-		SaveX(schema.IncludeTrashed(context.Background()))
+		SaveX(softdelete.IncludeTrashed(context.Background()))
 	rec := entClient.AdminArea.Query().Where(adminarea.ID(1)).
 		OnlyX(context.Background())
 	eaa := ReadAdminAreaParent200JSONResponse{
@@ -83,7 +83,7 @@ func Test_ReadAdminAreaParent_returns_deleted_parent_if_requested(t *testing.T) 
 		SaveX(context.Background())
 	entClient.AdminArea.DeleteOneID(1).ExecX(context.Background())
 	rec := entClient.AdminArea.Query().Where(adminarea.ID(1)).
-		OnlyX(schema.IncludeTrashed(context.Background()))
+		OnlyX(softdelete.IncludeTrashed(context.Background()))
 	eaa := ReadAdminAreaParent200JSONResponse{
 		Id:        1,
 		Name:      "name 0",

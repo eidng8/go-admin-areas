@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 
+	"github.com/eidng8/go-softdelete"
+
 	"github.com/eidng8/go-admin-areas/ent"
 )
 
@@ -11,7 +13,7 @@ import (
 func (s Server) DeleteAdminArea(
 	ctx context.Context, request DeleteAdminAreaRequestObject,
 ) (DeleteAdminAreaResponseObject, error) {
-	qc := newQueryContext(request.Params.Trashed, ctx)
+	qc := softdelete.NewSoftDeleteQueryContext(request.Params.Trashed, ctx)
 	tx, err := s.EC.Tx(qc)
 	if err != nil {
 		return nil, err

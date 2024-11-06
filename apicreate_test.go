@@ -23,9 +23,10 @@ func Test_CreateAdminArea_creates_new_record(t *testing.T) {
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusCreated, res.Code)
 	actual := res.Body.String()
-	aa := entClient.AdminArea.Query().Where(adminarea.NameEQ("test name")).
+	aa, err := entClient.AdminArea.Query().Where(adminarea.NameEQ("test name")).
 		Where(adminarea.AbbrEQ("test abbr")).Where(adminarea.ParentIDEQ(1)).
-		OnlyX(context.Background())
+		Only(context.Background())
+	require.Nil(t, err, "failed to find the created record in database")
 	pid := 1
 	b, err := jsoniter.Marshal(
 		CreateAdminArea201JSONResponse{
