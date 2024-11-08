@@ -30,20 +30,7 @@ func (s Server) ListAdminArea(
 	if err != nil {
 		return nil, err
 	}
-	return ListAdminArea200JSONResponse{
-		CurrentPage:  areas.CurrentPage,
-		FirstPageUrl: areas.FirstPageUrl,
-		From:         areas.From,
-		LastPage:     areas.LastPage,
-		LastPageUrl:  areas.LastPageUrl,
-		NextPageUrl:  areas.NextPageUrl,
-		Path:         areas.Path,
-		PerPage:      areas.PerPage,
-		PrevPageUrl:  areas.PrevPageUrl,
-		To:           areas.To,
-		Total:        areas.Total,
-		Data:         mapAdminAreaListFromEnt(areas.Data),
-	}, nil
+	return mapPage[ListAdminArea200JSONResponse](areas), nil
 }
 
 func applyNameFilter(

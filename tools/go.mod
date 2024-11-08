@@ -6,6 +6,7 @@ require (
 	entgo.io/contrib v0.6.0
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/gin-gonic/gin v1.10.0
+	github.com/oapi-codegen/nullable v1.1.0
 	github.com/oapi-codegen/oapi-codegen/v2 v2.4.1
 	github.com/oapi-codegen/runtime v1.1.1
 )
@@ -23,6 +24,7 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/dlclark/regexp2 v1.11.4 // indirect
 	github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 // indirect
+	github.com/eidng8/go-ent v0.0.2 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect

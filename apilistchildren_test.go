@@ -446,3 +446,48 @@ func Test_ListAdminAreaChildren_should_report_400_for_invalid_perPage(t *testing
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusBadRequest, res.Code)
 }
+
+func Test_ListAdminAreaChildren_should_return_all_descendants(t *testing.T) {
+	engine, entClient, res := setupGinTest(t)
+	entClient.AdminArea.Update().SetParentID(1).
+		Where(adminarea.IDIn(2, 3)).ExecX(context.Background())
+	entClient.AdminArea.Update().SetParentID(2).
+		Where(adminarea.IDIn(4, 5, 6)).ExecX(context.Background())
+	entClient.AdminArea.Update().SetParentID(3).
+		Where(adminarea.IDIn(7, 8)).ExecX(context.Background())
+	entClient.AdminArea.Update().SetParentID(4).
+		Where(adminarea.IDIn(9, 10, 11, 12)).
+		ExecX(context.Background())
+	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
+		Where(adminarea.IDGT(1)).Where(adminarea.IDLTE(12)).
+		AllX(context.Background())
+	list := make([]*AdminArea, len(rows))
+	for i, row := range rows {
+		list[i] = newAdminAreaFromEnt(row)
+	}
+	page := paginate.PaginatedList[AdminArea]{
+		Total:        11,
+		PerPage:      11,
+		CurrentPage:  1,
+		LastPage:     1,
+		FirstPageUrl: "http://127.0.0.1/admin-areas/1/children?recurse=1",
+		LastPageUrl:  "",
+		NextPageUrl:  "",
+		PrevPageUrl:  "",
+		Path:         "http://127.0.0.1/admin-areas/1/children",
+		From:         1,
+		To:           11,
+		Data:         list,
+	}
+	bytes, err := jsoniter.Marshal(page)
+	assert.Nil(t, err)
+	expected := string(bytes)
+	req, _ := http.NewRequest(
+		http.MethodGet, "http://127.0.0.1/admin-areas/1/children?recurse=1",
+		nil,
+	)
+	engine.ServeHTTP(res, req)
+	assert.Equal(t, http.StatusOK, res.Code)
+	actual := res.Body.String()
+	require.JSONEq(t, expected, actual)
+}

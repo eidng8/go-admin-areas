@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/eidng8/go-paginate"
 	"github.com/oapi-codegen/nullable"
 
 	"github.com/eidng8/go-admin-areas/ent"
@@ -54,4 +55,23 @@ func mapAdminAreaListFromEnt(array []*ent.AdminArea) []AdminAreaList {
 		data[i] = newAdminAreaListFromEnt(row)
 	}
 	return data
+}
+
+func mapPage[T ListAdminArea200JSONResponse | ListAdminAreaChildren200JSONResponse](
+	page *paginate.PaginatedList[ent.AdminArea],
+) T {
+	return T{
+		CurrentPage:  page.CurrentPage,
+		FirstPageUrl: page.FirstPageUrl,
+		From:         page.From,
+		LastPage:     page.LastPage,
+		LastPageUrl:  page.LastPageUrl,
+		NextPageUrl:  page.NextPageUrl,
+		Path:         page.Path,
+		PerPage:      page.PerPage,
+		PrevPageUrl:  page.PrevPageUrl,
+		To:           page.To,
+		Total:        page.Total,
+		Data:         mapAdminAreaListFromEnt(page.Data),
+	}
 }

@@ -9,6 +9,7 @@ import (
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
+	ee "github.com/eidng8/go-ent"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ogen-go/ogen"
 )
@@ -18,8 +19,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("creating entoas extension: %v", err)
 	}
-	ext := entc.Extensions(oas)
-	if err = entc.Generate("./ent/schema", genConfig(), ext); err != nil {
+	ext := entc.Extensions(oas, &ee.Extension{})
+	err = entc.Generate("./ent/schema", genConfig(), ext)
+	if err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}
 }
@@ -63,6 +65,9 @@ func genConfig() *gen.Config {
 			gen.FeatureExecQuery,
 			gen.FeatureVersionedMigration,
 		},
+		// Templates: []*gen.Template{
+		// 	gen.MustParse(gen.NewTemplate("query_cte").ParseFiles("query_cte.tmpl")),
+		// },
 	}
 }
 

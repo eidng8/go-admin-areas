@@ -35,10 +35,12 @@ github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 h1:PRxIJD8XjimM5aT
 github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936/go.mod h1:ttYvX5qlB+mlV1okblJqcSMtR4c52UKxDiX9GRBS8+Q=
 github.com/eidng8/go-db v0.0.1 h1:kIiEF+tsNWBbdD7VMvYgabhpbvz/SaLdS2Gtiv0nteE=
 github.com/eidng8/go-db v0.0.1/go.mod h1:lSIPSRAbBUF21DmsSefPyakvWA6cAzQtBVTuyF5WloI=
-github.com/eidng8/go-paginate v0.0.6 h1:4Usr0lHSjKvRkRirnKvCbIM4zCvIeNGQt1FUJ1hnkB0=
-github.com/eidng8/go-paginate v0.0.6/go.mod h1:tapRlpwfkvevZcn+MTaBPjlsillfbOhW504S/p+uod4=
+github.com/eidng8/go-paginate v0.1.1 h1:sN7I0xPyK1I2/A2i0rGG0fMFxhtkxGmiPWamNsEjYqU=
+github.com/eidng8/go-paginate v0.1.1/go.mod h1:BfobrR82DecZT/gDG2tdU7NAAET5dhz5QH+xdQF1+Ss=
 github.com/eidng8/go-softdelete v0.0.1 h1:KRIwPUv1aDeOecGSdZvVr46+oRzHnXponPtatICNvgs=
 github.com/eidng8/go-softdelete v0.0.1/go.mod h1:ies8xCbP5KTp9OZXyx/rU0phjLgtU1wTb6cwg2oeuAM=
+github.com/eidng8/go-url v0.0.1 h1:lOZp+nFZLUO5VL6NHDgAUPoj/lCtzxzTFWEezBRU42Q=
+github.com/eidng8/go-url v0.0.1/go.mod h1:jOFyorb+Kg6jCJquQhXRTp48c5jlqyBrTwNWflctAJg=
 github.com/fatih/color v1.17.0 h1:GlRw1BRJxkpqUCBKzKOw098ed57fEsKeNjpTe3cSjK4=
 github.com/fatih/color v1.17.0/go.mod h1:YZ7TlrGPkiz6ku9fK3TLD/pl3CpsiFyu8N92HLgmosI=
 github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=

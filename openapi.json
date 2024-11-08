@@ -461,6 +461,14 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "recurse",
+            "in": "query",
+            "description": "Whether to return all descendants (recurse to last leaf)",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {

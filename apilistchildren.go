@@ -2,13 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"unicode/utf8"
 
-	"entgo.io/ent/dialect/sql"
 	"github.com/eidng8/go-paginate"
 	"github.com/eidng8/go-softdelete"
+	"github.com/eidng8/go-url"
 	"github.com/gin-gonic/gin"
 
 	"github.com/eidng8/go-admin-areas/ent"
@@ -21,38 +20,54 @@ import (
 func (s Server) ListAdminAreaChildren(
 	ctx context.Context, request ListAdminAreaChildrenRequestObject,
 ) (ListAdminAreaChildrenResponseObject, error) {
-	query := s.EC.Debug().AdminArea.Query().Order(adminarea.ByID()).Where(
-		adminarea.HasParentWith(adminarea.ID(uint32(request.Id))),
-	)
+	gc := ctx.(*gin.Context)
+	query := s.EC.AdminArea.Query().Order(adminarea.ByID())
 	qc := softdelete.NewSoftDeleteQueryContext(request.Params.Trashed, ctx)
 	applyChildrenNameFilter(request, query)
 	applyChildrenAbbrFilter(request, query)
-	return getPage(ctx, qc, query)
+	id := request.Id
+	if nil != request.Params.Recurse && *request.Params.Recurse {
+		return getDescendants(gc, qc, query, id)
+	}
+	return getPage(gc, qc, query, id)
 }
 
 func getPage(
-	ctx context.Context, qc context.Context,
-	query *ent.AdminAreaQuery,
+	gc *gin.Context, qc context.Context, query *ent.AdminAreaQuery, id int,
 ) (ListAdminAreaChildrenResponseObject, error) {
-	gc := ctx.(*gin.Context)
+	query.Where(adminarea.HasParentWith(adminarea.ID(uint32(id))))
 	pageParams := paginate.GetPaginationParams(gc)
 	areas, err := paginate.GetPage[ent.AdminArea](gc, qc, query, pageParams)
 	if err != nil {
 		return nil, err
 	}
+	return mapPage[ListAdminAreaChildren200JSONResponse](areas), nil
+}
+
+func getDescendants(
+	gc *gin.Context, qc context.Context, query *ent.AdminAreaQuery, id int,
+) (ListAdminAreaChildrenResponseObject, error) {
+	areas, err := query.QueryChildrenRecursive(uint32(id)).All(qc)
+	if err != nil {
+		return nil, err
+	}
+	count := len(areas)
+	req := gc.Request
+	u := paginate.UrlWithoutPageParams(req)
+	u = url.WithQueryParam(*u, "recurse", "1")
 	return ListAdminAreaChildren200JSONResponse{
-		CurrentPage:  areas.CurrentPage,
-		FirstPageUrl: areas.FirstPageUrl,
-		From:         areas.From,
-		LastPage:     areas.LastPage,
-		LastPageUrl:  areas.LastPageUrl,
-		NextPageUrl:  areas.NextPageUrl,
-		Path:         areas.Path,
-		PerPage:      areas.PerPage,
-		PrevPageUrl:  areas.PrevPageUrl,
-		To:           areas.To,
-		Total:        areas.Total,
-		Data:         mapAdminAreaListFromEnt(areas.Data),
+		CurrentPage:  1,
+		FirstPageUrl: u.String(),
+		From:         1,
+		LastPage:     1,
+		LastPageUrl:  "",
+		NextPageUrl:  "",
+		Path:         url.RequestBaseUrl(req).String(),
+		PerPage:      count,
+		PrevPageUrl:  "",
+		To:           count,
+		Total:        count,
+		Data:         mapAdminAreaListFromEnt(areas),
 	}, nil
 }
 
@@ -78,26 +93,4 @@ func applyChildrenAbbrFilter(
 		cr[i] = adminarea.AbbrContains(a)
 	}
 	query.Where(adminarea.Or(cr...))
-}
-
-func descendantsQuery(query *ent.AdminAreaQuery) *ent.AdminAreaQuery {
-	return query.Where(
-		func(stmt *sql.Selector) {
-			child := sql.Table(adminarea.Table)
-			parent := sql.Table(adminarea.Table)
-			view := fmt.Sprintf("%s_tree", adminarea.Table)
-			keys := []string{adminarea.FieldID, adminarea.FieldParentID}
-			cte := sql.WithRecursive(view, keys...)
-			pid := cte.C(adminarea.FieldID)
-			cte.As(
-				sql.Select(parent.Columns(keys...)...).From(child).
-					Where(sql.IsNull(parent.C(adminarea.FieldParentID))).
-					UnionAll(
-						sql.Select(child.Columns(keys...)...).From(child).
-							Join(cte).On(child.C(adminarea.FieldParentID), pid),
-					),
-			)
-			stmt.Prefix(cte).Join(cte).On(stmt.C(adminarea.FieldID), pid)
-		},
-	)
 }

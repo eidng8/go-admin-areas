@@ -187,6 +187,9 @@ type ListAdminAreaChildrenParams struct {
 
 	// Trashed Whether to include trashed items
 	Trashed *bool `form:"trashed,omitempty" json:"trashed,omitempty" yaml:"trashed,omitempty" xml:"trashed,omitempty" bson:"trashed,omitempty"`
+
+	// Recurse Whether to return all descendants (recurse to last leaf)
+	Recurse *bool `form:"recurse,omitempty" json:"recurse,omitempty" yaml:"recurse,omitempty" xml:"recurse,omitempty" bson:"recurse,omitempty"`
 }
 
 // ReadAdminAreaParentParams defines parameters for ReadAdminAreaParent.
