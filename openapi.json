@@ -35,6 +35,14 @@
             }
           },
           {
+            "name": "trashed",
+            "in": "query",
+            "description": "Whether to include trashed items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "name": "name",
             "in": "query",
             "description": "Name of the administrative area",
@@ -52,14 +60,6 @@
               "type": "string",
               "maxLength": 255,
               "minLength": 2
-            }
-          },
-          {
-            "name": "trashed",
-            "in": "query",
-            "description": "Whether to include trashed items",
-            "schema": {
-              "type": "boolean"
             }
           }
         ],
@@ -122,7 +122,7 @@
                       "type": "string"
                     },
                     "data": {
-                      "description": "List of administrative areas",
+                      "description": "List of items",
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/AdminAreaList"
@@ -177,7 +177,9 @@
                 "properties": {
                   "parent_id": {
                     "type": "integer",
-                    "minimum": 1
+                    "format": "int64",
+                    "maximum": 4294967295,
+                    "minimum": 0
                   },
                   "name": {
                     "description": "Administrative area name",
@@ -351,7 +353,9 @@
                 "properties": {
                   "parent_id": {
                     "type": "integer",
-                    "minimum": 1
+                    "format": "int64",
+                    "maximum": 4294967295,
+                    "minimum": 0
                   },
                   "name": {
                     "description": "Administrative area name",
@@ -435,6 +439,14 @@
             }
           },
           {
+            "name": "trashed",
+            "in": "query",
+            "description": "Whether to include trashed items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "name": "name",
             "in": "query",
             "description": "Name of the administrative area",
@@ -455,14 +467,6 @@
             }
           },
           {
-            "name": "trashed",
-            "in": "query",
-            "description": "Whether to include trashed items",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
             "name": "recurse",
             "in": "query",
             "description": "Whether to return all descendants (recurse to last leaf)",
@@ -473,7 +477,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Paginated list of administrative areas",
+            "description": "Paginated list of subordinate administrative areas",
             "content": {
               "application/json": {
                 "schema": {
@@ -530,7 +534,7 @@
                       "type": "string"
                     },
                     "data": {
-                      "description": "List of administrative areas",
+                      "description": "List of items",
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/AdminAreaList"
@@ -626,27 +630,16 @@
     },
     "/admin-areas/{id}/restore": {
       "post": {
-        "tags": [
-          "admin-areas"
-        ],
-        "summary": "Restore a trashed administrative area",
-        "description": "Restore a trashed administrative area",
-        "operationId": "restoreAdminArea",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the AdminArea",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
+            "required": true
           }
         ],
         "responses": {
           "204": {
-            "description": "AdminArea with requested ID was restored"
+            "description": "Record with requested ID was restored"
           },
           "400": {
             "$ref": "#/components/responses/400"
@@ -675,7 +668,9 @@
           },
           "parent_id": {
             "type": "integer",
-            "minimum": 1
+            "format": "int64",
+            "maximum": 4294967295,
+            "minimum": 0
           },
           "name": {
             "description": "Administrative area name",
@@ -722,7 +717,9 @@
           },
           "parent_id": {
             "type": "integer",
-            "minimum": 1
+            "format": "int64",
+            "maximum": 4294967295,
+            "minimum": 0
           },
           "name": {
             "description": "Administrative area name",
@@ -760,7 +757,9 @@
           },
           "parent_id": {
             "type": "integer",
-            "minimum": 1
+            "format": "int64",
+            "maximum": 4294967295,
+            "minimum": 0
           },
           "name": {
             "description": "Administrative area name",
@@ -798,7 +797,9 @@
           },
           "parent_id": {
             "type": "integer",
-            "minimum": 1
+            "format": "int64",
+            "maximum": 4294967295,
+            "minimum": 0
           },
           "name": {
             "description": "Administrative area name",
@@ -842,7 +843,9 @@
           },
           "parent_id": {
             "type": "integer",
-            "minimum": 1
+            "format": "int64",
+            "maximum": 4294967295,
+            "minimum": 0
           },
           "name": {
             "description": "Administrative area name",
@@ -880,7 +883,9 @@
           },
           "parent_id": {
             "type": "integer",
-            "minimum": 1
+            "format": "int64",
+            "maximum": 4294967295,
+            "minimum": 0
           },
           "name": {
             "description": "Administrative area name",
@@ -918,7 +923,9 @@
           },
           "parent_id": {
             "type": "integer",
-            "minimum": 1
+            "format": "int64",
+            "maximum": 4294967295,
+            "minimum": 0
           },
           "name": {
             "description": "Administrative area name",
