@@ -95,7 +95,7 @@ func (AdminArea) Edges() []ent.Edge {
 
 func (AdminArea) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		// Comment out this when running `go generate` for the first time
+		// Comment out these when running `go generate` for the first time
 		softdelete.Mixin{},
 		simpletree.ParentU32Mixin[AdminArea]{},
 	}
