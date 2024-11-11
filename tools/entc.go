@@ -9,7 +9,8 @@ import (
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
-	ee "github.com/eidng8/go-ent"
+	"github.com/eidng8/go-ent/simpletree"
+	"github.com/eidng8/go-ent/softdelete"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ogen-go/ogen"
 )
@@ -19,7 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("creating entoas extension: %v", err)
 	}
-	ext := entc.Extensions(oas, &ee.Extension{})
+	ext := entc.Extensions(oas, &simpletree.Extension{})
 	err = entc.Generate("./ent/schema", genConfig(), ext)
 	if err != nil {
 		log.Fatalf("running ent codegen: %v", err)
@@ -32,25 +33,19 @@ func newOasExtension() (*entoas.Extension, error) {
 			func(g *gen.Graph, s *ogen.Spec) error {
 				genSpec(s)
 				constraintRequestBody(s.Paths)
-				addDeletedAtField(s.Components.Schemas["AdminAreaRead"])
-				s.Paths["/admin-areas/{id}/restore"] = addRestoreEndpoint()
+				softdelete.AttachTo(s, "/admin-areas", "AdminAreaRead")
 				ep := s.Paths["/admin-areas"]
 				fixPerPageParamName(ep.Get.Parameters)
-				ep.Get.AddParameters(nameParam(), abbrParam(), trashedParam())
-				removeEdges(ep.Post)
+				ep.Get.AddParameters(nameParam(), abbrParam())
+				simpletree.RemoveEdges(ep.Post)
 				setPaginateResponse(ep.Get)
 				ep = s.Paths["/admin-areas/{id}"]
-				ep.Get.AddParameters(trashedParam())
-				ep.Delete.AddParameters(trashedParam())
-				removeEdges(ep.Patch)
+				simpletree.RemoveEdges(ep.Patch)
 				ep = s.Paths["/admin-areas/{id}/parent"]
-				ep.Get.AddParameters(trashedParam())
 				ep = s.Paths["/admin-areas/{id}/children"]
 				fixPerPageParamName(ep.Get.Parameters)
 				setPaginateResponse(ep.Get)
-				ep.Get.AddParameters(
-					nameParam(), abbrParam(), trashedParam(), recurseParam(),
-				)
+				ep.Get.AddParameters(nameParam(), abbrParam(), recurseParam())
 				return nil
 			},
 		),

@@ -7,9 +7,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"github.com/eidng8/go-softdelete"
+	"github.com/eidng8/go-ent/simpletree"
+	"github.com/eidng8/go-ent/softdelete"
 	"github.com/ogen-go/ogen"
 
 	gen "github.com/eidng8/go-admin-areas/ent"
@@ -42,14 +42,6 @@ func (AdminArea) Fields() []ent.Field {
 		field.Uint32("id").Unique().Immutable().Annotations(
 			// adds constraints to the generated OpenAPI specification
 			entoas.Schema(&ogen.Schema{Type: "integer", Minimum: n1}),
-		),
-		field.Uint32("parent_id").Optional().Nillable().Annotations(
-			entoas.Schema(
-				&ogen.Schema{
-					Type:    "integer",
-					Minimum: n1,
-				},
-			),
 		),
 		field.String("name").NotEmpty().MinLen(2).MaxLen(255).
 			Comment("Administrative area name").Annotations(
@@ -91,33 +83,34 @@ func (AdminArea) Fields() []ent.Field {
 
 func (AdminArea) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("children", AdminArea.Type).
-			Annotations(
-				entsql.OnDelete(entsql.Restrict),
-				entoas.ReadOnly(true),
-				entoas.Skip(true),
-			).
-			From("parent").Field("parent_id").Unique(),
+		// edge.To("children", AdminArea.Type).
+		// 	Annotations(
+		// 		entsql.OnDelete(entsql.Restrict),
+		// 		entoas.ReadOnly(true),
+		// 		entoas.Skip(true),
+		// 	).
+		// 	From("parent").Field("parent_id").Unique(),
 	}
 }
 
 func (AdminArea) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		// Comment out this when running `go generate` for the first time
-		softdelete.SoftDeleteMixin{},
+		softdelete.Mixin{},
+		simpletree.ParentU32Mixin[AdminArea]{},
 	}
 }
 
 func (AdminArea) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		// Comment out this when running `go generate` for the first time
-		softdelete.SoftDeleteInterceptor(intercept.NewQuery),
+		softdelete.Interceptor(intercept.NewQuery),
 	}
 }
 
 func (AdminArea) Hooks() []ent.Hook {
 	return []ent.Hook{
 		// Comment out this when running `go generate` for the first time
-		softdelete.SoftDeleteMutator[*gen.Client](),
+		softdelete.Mutator[*gen.Client](),
 	}
 }

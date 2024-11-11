@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/eidng8/go-paginate"
-	"github.com/eidng8/go-softdelete"
+	"github.com/eidng8/go-ent/paginate"
+	"github.com/eidng8/go-ent/softdelete"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

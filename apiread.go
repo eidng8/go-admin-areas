@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/eidng8/go-softdelete"
+	"github.com/eidng8/go-ent/softdelete"
 	"github.com/oapi-codegen/nullable"
 
 	"github.com/eidng8/go-admin-areas/ent"

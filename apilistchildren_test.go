@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/eidng8/go-paginate"
-	"github.com/eidng8/go-softdelete"
+	"github.com/eidng8/go-ent/paginate"
+	sd "github.com/eidng8/go-ent/softdelete"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -172,7 +172,7 @@ func Test_ListAdminAreaChildren_should_return_2nd_page_include_deleted(t *testin
 		ExecX(context.Background())
 	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
 		Where(adminarea.IDLTE(22)).Where(adminarea.ParentIDEQ(2)).
-		Offset(10).Limit(10).AllX(softdelete.IncludeTrashed(context.Background()))
+		Offset(10).Limit(10).AllX(sd.IncludeTrashed(context.Background()))
 	list := make([]*AdminArea, len(rows))
 	for i, row := range rows {
 		list[i] = newAdminAreaFromEnt(row)

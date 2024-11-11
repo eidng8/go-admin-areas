@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/eidng8/go-paginate"
+	"github.com/eidng8/go-ent/paginate"
 	"github.com/oapi-codegen/nullable"
 
 	"github.com/eidng8/go-admin-areas/ent"

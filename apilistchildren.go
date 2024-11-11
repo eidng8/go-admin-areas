@@ -5,8 +5,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/eidng8/go-paginate"
-	"github.com/eidng8/go-softdelete"
+	"github.com/eidng8/go-ent/paginate"
+	"github.com/eidng8/go-ent/softdelete"
 	"github.com/eidng8/go-url"
 	"github.com/gin-gonic/gin"
 

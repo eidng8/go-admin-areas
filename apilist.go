@@ -5,10 +5,10 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/eidng8/go-softdelete"
+	"github.com/eidng8/go-ent/softdelete"
 	"github.com/gin-gonic/gin"
 
-	"github.com/eidng8/go-paginate"
+	"github.com/eidng8/go-ent/paginate"
 
 	"github.com/eidng8/go-admin-areas/ent"
 	"github.com/eidng8/go-admin-areas/ent/adminarea"
