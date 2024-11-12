@@ -35,14 +35,6 @@
             }
           },
           {
-            "name": "trashed",
-            "in": "query",
-            "description": "Whether to include trashed items",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
             "name": "name",
             "in": "query",
             "description": "Name of the administrative area",
@@ -60,6 +52,14 @@
               "type": "string",
               "maxLength": 255,
               "minLength": 2
+            }
+          },
+          {
+            "name": "trashed",
+            "in": "query",
+            "description": "Whether to include trashed items",
+            "schema": {
+              "type": "boolean"
             }
           }
         ],
@@ -176,10 +176,11 @@
                 "type": "object",
                 "properties": {
                   "parent_id": {
+                    "description": "Parent record ID",
                     "type": "integer",
-                    "format": "int64",
+                    "format": "uint32",
                     "maximum": 4294967295,
-                    "minimum": 0
+                    "minimum": 1
                   },
                   "name": {
                     "description": "Administrative area name",
@@ -243,6 +244,7 @@
             "required": true,
             "schema": {
               "type": "integer",
+              "format": "uint32",
               "minimum": 1
             }
           },
@@ -295,6 +297,7 @@
             "required": true,
             "schema": {
               "type": "integer",
+              "format": "uint32",
               "minimum": 1
             }
           },
@@ -340,6 +343,7 @@
             "required": true,
             "schema": {
               "type": "integer",
+              "format": "uint32",
               "minimum": 1
             }
           }
@@ -352,10 +356,11 @@
                 "type": "object",
                 "properties": {
                   "parent_id": {
+                    "description": "Parent record ID",
                     "type": "integer",
-                    "format": "int64",
+                    "format": "uint32",
                     "maximum": 4294967295,
-                    "minimum": 0
+                    "minimum": 1
                   },
                   "name": {
                     "description": "Administrative area name",
@@ -419,6 +424,7 @@
             "required": true,
             "schema": {
               "type": "integer",
+              "format": "uint32",
               "minimum": 1
             }
           },
@@ -436,14 +442,6 @@
             "description": "item count to render per page",
             "schema": {
               "type": "integer"
-            }
-          },
-          {
-            "name": "trashed",
-            "in": "query",
-            "description": "Whether to include trashed items",
-            "schema": {
-              "type": "boolean"
             }
           },
           {
@@ -477,7 +475,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Paginated list of subordinate administrative areas",
+            "description": "Paginated list of subordinate administrative areas. Pagination is disabled when `recurse` is true.",
             "content": {
               "application/json": {
                 "schema": {
@@ -590,15 +588,8 @@
             "required": true,
             "schema": {
               "type": "integer",
+              "format": "uint32",
               "minimum": 1
-            }
-          },
-          {
-            "name": "trashed",
-            "in": "query",
-            "description": "Whether to include trashed items",
-            "schema": {
-              "type": "boolean"
             }
           }
         ],
@@ -634,7 +625,13 @@
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "description": "ID of the AdminArea",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 1
+            }
           }
         ],
         "responses": {
@@ -664,13 +661,15 @@
         "properties": {
           "id": {
             "type": "integer",
+            "format": "uint32",
             "minimum": 1
           },
           "parent_id": {
+            "description": "Parent record ID",
             "type": "integer",
-            "format": "int64",
+            "format": "uint32",
             "maximum": 4294967295,
-            "minimum": 0
+            "minimum": 1
           },
           "name": {
             "description": "Administrative area name",
@@ -713,13 +712,15 @@
         "properties": {
           "id": {
             "type": "integer",
+            "format": "uint32",
             "minimum": 1
           },
           "parent_id": {
+            "description": "Parent record ID",
             "type": "integer",
-            "format": "int64",
+            "format": "uint32",
             "maximum": 4294967295,
-            "minimum": 0
+            "minimum": 1
           },
           "name": {
             "description": "Administrative area name",
@@ -753,13 +754,15 @@
         "properties": {
           "id": {
             "type": "integer",
+            "format": "uint32",
             "minimum": 1
           },
           "parent_id": {
+            "description": "Parent record ID",
             "type": "integer",
-            "format": "int64",
+            "format": "uint32",
             "maximum": 4294967295,
-            "minimum": 0
+            "minimum": 1
           },
           "name": {
             "description": "Administrative area name",
@@ -793,13 +796,15 @@
         "properties": {
           "id": {
             "type": "integer",
+            "format": "uint32",
             "minimum": 1
           },
           "parent_id": {
+            "description": "Parent record ID",
             "type": "integer",
-            "format": "int64",
+            "format": "uint32",
             "maximum": 4294967295,
-            "minimum": 0
+            "minimum": 1
           },
           "name": {
             "description": "Administrative area name",
@@ -839,13 +844,15 @@
         "properties": {
           "id": {
             "type": "integer",
+            "format": "uint32",
             "minimum": 1
           },
           "parent_id": {
+            "description": "Parent record ID",
             "type": "integer",
-            "format": "int64",
+            "format": "uint32",
             "maximum": 4294967295,
-            "minimum": 0
+            "minimum": 1
           },
           "name": {
             "description": "Administrative area name",
@@ -879,13 +886,15 @@
         "properties": {
           "id": {
             "type": "integer",
+            "format": "uint32",
             "minimum": 1
           },
           "parent_id": {
+            "description": "Parent record ID",
             "type": "integer",
-            "format": "int64",
+            "format": "uint32",
             "maximum": 4294967295,
-            "minimum": 0
+            "minimum": 1
           },
           "name": {
             "description": "Administrative area name",
@@ -919,13 +928,15 @@
         "properties": {
           "id": {
             "type": "integer",
+            "format": "uint32",
             "minimum": 1
           },
           "parent_id": {
+            "description": "Parent record ID",
             "type": "integer",
-            "format": "int64",
+            "format": "uint32",
             "maximum": 4294967295,
-            "minimum": 0
+            "minimum": 1
           },
           "name": {
             "description": "Administrative area name",

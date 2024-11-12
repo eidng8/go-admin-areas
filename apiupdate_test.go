@@ -28,7 +28,7 @@ func Test_UpdateAdminArea_updates_existing_record(t *testing.T) {
 	aa := entClient.AdminArea.Query().Where(adminarea.NameEQ("test name")).
 		Where(adminarea.AbbrEQ("test abbr")).Where(adminarea.IDEQ(2)).
 		OnlyX(context.Background())
-	pid := 1
+	pid := uint32(1)
 	b, err := jsoniter.Marshal(
 		CreateAdminArea201JSONResponse{
 			Id:        2,

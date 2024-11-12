@@ -57,15 +57,15 @@ func (s Server) CreateAdminArea(
 	} else {
 		abbr = nullable.NewNullableWithValue(*aa.Abbr)
 	}
-	var pid *int
+	var pid *uint32
 	if nil == aa.ParentID {
 		pid = nil
 	} else {
-		val := int(*aa.ParentID)
+		val := *aa.ParentID
 		pid = &val
 	}
 	return CreateAdminArea201JSONResponse{
-		Id:        int(aa.ID),
+		Id:        aa.ID,
 		ParentId:  pid,
 		Name:      aa.Name,
 		Abbr:      abbr,

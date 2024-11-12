@@ -17,7 +17,7 @@ func (s Server) ReadAdminArea(
 ) (ReadAdminAreaResponseObject, error) {
 	qc := softdelete.NewSoftDeleteQueryContext(request.Params.Trashed, ctx)
 	area, err := s.EC.AdminArea.Query().
-		Where(adminarea.ID(uint32(request.Id))).Only(qc)
+		Where(adminarea.ID(request.Id)).Only(qc)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return ReadAdminArea404JSONResponse{}, nil
@@ -29,13 +29,13 @@ func (s Server) ReadAdminArea(
 
 func newReadAdminArea200JSONResponseFromEnt(eaa *ent.AdminArea) ReadAdminArea200JSONResponse {
 	aa := ReadAdminArea200JSONResponse{}
-	aa.Id = int(eaa.ID)
+	aa.Id = eaa.ID
 	aa.Name = eaa.Name
 	if eaa.Abbr != nil {
 		aa.Abbr = nullable.NewNullableWithValue(*eaa.Abbr)
 	}
 	if eaa.ParentID != nil {
-		val := int(*eaa.ParentID)
+		val := *eaa.ParentID
 		aa.ParentId = &val
 	}
 	if eaa.DeletedAt != nil {

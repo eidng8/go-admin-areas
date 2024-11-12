@@ -18,7 +18,7 @@ func Test_ReadAdminArea_should_return_one_record(t *testing.T) {
 	rec := entClient.AdminArea.Query().Where(adminarea.ID(1)).
 		OnlyX(context.Background())
 	eaa := ReadAdminArea200JSONResponse{
-		Id:        int(rec.ID),
+		Id:        rec.ID,
 		Name:      rec.Name,
 		Abbr:      nullable.NewNullableWithValue(*rec.Abbr),
 		CreatedAt: rec.CreatedAt,
@@ -48,7 +48,7 @@ func Test_ReadAdminArea_returns_deleted_record_if_requested(t *testing.T) {
 	rec := entClient.AdminArea.Query().Where(adminarea.ID(1)).
 		OnlyX(softdelete.IncludeTrashed(context.Background()))
 	eaa := ReadAdminArea200JSONResponse{
-		Id:        int(rec.ID),
+		Id:        rec.ID,
 		Name:      rec.Name,
 		Abbr:      nullable.NewNullableWithValue(*rec.Abbr),
 		CreatedAt: rec.CreatedAt,

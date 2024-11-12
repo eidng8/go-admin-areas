@@ -9,13 +9,13 @@ import (
 
 func newAdminAreaFromEnt(eaa *ent.AdminArea) *AdminArea {
 	aa := AdminArea{}
-	aa.Id = int(eaa.ID)
+	aa.Id = eaa.ID
 	aa.Name = eaa.Name
 	if eaa.Abbr != nil {
 		aa.Abbr = nullable.NewNullableWithValue(*eaa.Abbr)
 	}
 	if eaa.ParentID != nil {
-		val := int(*eaa.ParentID)
+		val := *eaa.ParentID
 		aa.ParentId = &val
 	}
 	aa.CreatedAt = eaa.CreatedAt
@@ -35,13 +35,13 @@ func newAdminAreaFromEnt(eaa *ent.AdminArea) *AdminArea {
 
 func newAdminAreaListFromEnt(eaa *ent.AdminArea) AdminAreaList {
 	aa := AdminAreaList{}
-	aa.Id = int(eaa.ID)
+	aa.Id = eaa.ID
 	aa.Name = eaa.Name
 	if eaa.Abbr != nil {
 		aa.Abbr = nullable.NewNullableWithValue(*eaa.Abbr)
 	}
 	if eaa.ParentID != nil {
-		val := int(*eaa.ParentID)
+		val := *eaa.ParentID
 		aa.ParentId = &val
 	}
 	aa.CreatedAt = eaa.CreatedAt

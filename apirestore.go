@@ -8,9 +8,9 @@ import (
 	"github.com/eidng8/go-admin-areas/ent"
 )
 
-func (s Server) RestoreAdminArea(
-	ctx context.Context, request RestoreAdminAreaRequestObject,
-) (RestoreAdminAreaResponseObject, error) {
+func (s Server) PostAdminAreasIdRestore(
+	ctx context.Context, request PostAdminAreasIdRestoreRequestObject,
+) (PostAdminAreasIdRestoreResponseObject, error) {
 	qc := softdelete.IncludeTrashed(ctx)
 	id := uint32(request.Id)
 	tx, err := s.EC.Tx(qc)
@@ -25,7 +25,7 @@ func (s Server) RestoreAdminArea(
 	err = tx.AdminArea.UpdateOneID(id).ClearDeletedAt().Exec(qc)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return RestoreAdminArea404JSONResponse{}, nil
+			return PostAdminAreasIdRestore404JSONResponse{}, nil
 		}
 		return nil, err
 	}
@@ -33,5 +33,5 @@ func (s Server) RestoreAdminArea(
 	if err != nil {
 		return nil, err
 	}
-	return RestoreAdminArea204Response{}, nil
+	return PostAdminAreasIdRestore204Response{}, nil
 }

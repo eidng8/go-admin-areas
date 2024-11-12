@@ -27,7 +27,7 @@ func Test_CreateAdminArea_creates_new_record(t *testing.T) {
 		Where(adminarea.AbbrEQ("test abbr")).Where(adminarea.ParentIDEQ(1)).
 		Only(context.Background())
 	require.Nil(t, err, "failed to find the created record in database")
-	pid := 1
+	pid := uint32(1)
 	b, err := jsoniter.Marshal(
 		CreateAdminArea201JSONResponse{
 			Id:        51,

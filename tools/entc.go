@@ -31,9 +31,9 @@ func newOasExtension() (*entoas.Extension, error) {
 	return entoas.NewExtension(
 		entoas.Mutations(
 			func(g *gen.Graph, s *ogen.Spec) error {
+				// Comment out these when running `go generate` for the first time
 				genSpec(s)
 				constraintRequestBody(s.Paths)
-				softdelete.AttachTo(s, "/admin-areas", "AdminAreaRead")
 				ep := s.Paths["/admin-areas"]
 				ep.Get.AddParameters(nameParam(), abbrParam())
 				simpletree.RemoveEdges(ep.Post)
@@ -44,6 +44,13 @@ func newOasExtension() (*entoas.Extension, error) {
 				)
 				ep = s.Paths["/admin-areas/{id}"]
 				simpletree.RemoveEdges(ep.Patch)
+				err := softdelete.AttachTo(
+					s, "/admin-areas", s.Components.Schemas["AdminAreaRead"],
+					ep.Get.Parameters[0],
+				)
+				if err != nil {
+					return err
+				}
 				ep = s.Paths["/admin-areas/{id}/children"]
 				ep.Get.AddParameters(nameParam(), abbrParam())
 				paginate.FixParamNames(ep.Get.Parameters)

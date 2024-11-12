@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 
-	"github.com/eidng8/go-ent/softdelete"
 	"github.com/oapi-codegen/nullable"
 
 	"github.com/eidng8/go-admin-areas/ent"
@@ -15,9 +14,8 @@ import (
 func (s Server) ReadAdminAreaParent(
 	ctx context.Context, request ReadAdminAreaParentRequestObject,
 ) (ReadAdminAreaParentResponseObject, error) {
-	qc := softdelete.NewSoftDeleteQueryContext(request.Params.Trashed, ctx)
 	area, err := s.EC.AdminArea.Query().Where(adminarea.ID(uint32(request.Id))).
-		WithParent().Only(qc)
+		WithParent().Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return ReadAdminAreaParent404JSONResponse{}, nil
@@ -34,13 +32,13 @@ func newReadAdminAreaParent200JSONResponseFromEnt(
 	eaa *ent.AdminArea,
 ) ReadAdminAreaParent200JSONResponse {
 	aar := ReadAdminAreaParent200JSONResponse{}
-	aar.Id = int(eaa.ID)
+	aar.Id = eaa.ID
 	aar.Name = eaa.Name
 	if eaa.Abbr != nil {
 		aar.Abbr = nullable.NewNullableWithValue(*eaa.Abbr)
 	}
 	if eaa.ParentID != nil {
-		val := int(*eaa.ParentID)
+		val := *eaa.ParentID
 		aar.ParentId = &val
 	}
 	aar.CreatedAt = eaa.CreatedAt

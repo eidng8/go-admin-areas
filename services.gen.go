@@ -46,22 +46,22 @@ type ServerInterface interface {
 	CreateAdminArea(c *gin.Context)
 	// Deletes a AdminArea by ID
 	// (DELETE /admin-areas/{id})
-	DeleteAdminArea(c *gin.Context, id int, params DeleteAdminAreaParams)
+	DeleteAdminArea(c *gin.Context, id uint32, params DeleteAdminAreaParams)
 	// Find a AdminArea by ID
 	// (GET /admin-areas/{id})
-	ReadAdminArea(c *gin.Context, id int, params ReadAdminAreaParams)
+	ReadAdminArea(c *gin.Context, id uint32, params ReadAdminAreaParams)
 	// Updates a AdminArea
 	// (PATCH /admin-areas/{id})
-	UpdateAdminArea(c *gin.Context, id int)
+	UpdateAdminArea(c *gin.Context, id uint32)
 	// List attached Children
 	// (GET /admin-areas/{id}/children)
-	ListAdminAreaChildren(c *gin.Context, id int, params ListAdminAreaChildrenParams)
+	ListAdminAreaChildren(c *gin.Context, id uint32, params ListAdminAreaChildrenParams)
 	// Find the attached AdminArea
 	// (GET /admin-areas/{id}/parent)
-	ReadAdminAreaParent(c *gin.Context, id int, params ReadAdminAreaParentParams)
-	// Restore a trashed administrative area
+	ReadAdminAreaParent(c *gin.Context, id uint32)
+
 	// (POST /admin-areas/{id}/restore)
-	RestoreAdminArea(c *gin.Context, id int)
+	PostAdminAreasIdRestore(c *gin.Context, id uint32)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -150,7 +150,7 @@ func (siw *ServerInterfaceWrapper) DeleteAdminArea(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "id" -------------
-	var id int
+	var id uint32
 
 	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
@@ -185,7 +185,7 @@ func (siw *ServerInterfaceWrapper) ReadAdminArea(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "id" -------------
-	var id int
+	var id uint32
 
 	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
@@ -220,7 +220,7 @@ func (siw *ServerInterfaceWrapper) UpdateAdminArea(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "id" -------------
-	var id int
+	var id uint32
 
 	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
@@ -244,7 +244,7 @@ func (siw *ServerInterfaceWrapper) ListAdminAreaChildren(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "id" -------------
-	var id int
+	var id uint32
 
 	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
@@ -287,14 +287,6 @@ func (siw *ServerInterfaceWrapper) ListAdminAreaChildren(c *gin.Context) {
 		return
 	}
 
-	// ------------- Optional query parameter "trashed" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
-		return
-	}
-
 	// ------------- Optional query parameter "recurse" -------------
 
 	err = runtime.BindQueryParameter("form", true, false, "recurse", c.Request.URL.Query(), &params.Recurse)
@@ -319,22 +311,11 @@ func (siw *ServerInterfaceWrapper) ReadAdminAreaParent(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "id" -------------
-	var id int
+	var id uint32
 
 	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
-		return
-	}
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params ReadAdminAreaParentParams
-
-	// ------------- Optional query parameter "trashed" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "trashed", c.Request.URL.Query(), &params.Trashed)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter trashed: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -345,16 +326,16 @@ func (siw *ServerInterfaceWrapper) ReadAdminAreaParent(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.ReadAdminAreaParent(c, id, params)
+	siw.Handler.ReadAdminAreaParent(c, id)
 }
 
-// RestoreAdminArea operation middleware
-func (siw *ServerInterfaceWrapper) RestoreAdminArea(c *gin.Context) {
+// PostAdminAreasIdRestore operation middleware
+func (siw *ServerInterfaceWrapper) PostAdminAreasIdRestore(c *gin.Context) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
-	var id int
+	var id uint32
 
 	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
@@ -369,7 +350,7 @@ func (siw *ServerInterfaceWrapper) RestoreAdminArea(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.RestoreAdminArea(c, id)
+	siw.Handler.PostAdminAreasIdRestore(c, id)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -406,7 +387,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.PATCH(options.BaseURL+"/admin-areas/:id", wrapper.UpdateAdminArea)
 	router.GET(options.BaseURL+"/admin-areas/:id/children", wrapper.ListAdminAreaChildren)
 	router.GET(options.BaseURL+"/admin-areas/:id/parent", wrapper.ReadAdminAreaParent)
-	router.POST(options.BaseURL+"/admin-areas/:id/restore", wrapper.RestoreAdminArea)
+	router.POST(options.BaseURL+"/admin-areas/:id/restore", wrapper.PostAdminAreasIdRestore)
 }
 
 type N400JSONResponse struct {
@@ -445,7 +426,7 @@ type ListAdminArea200JSONResponse struct {
 	// CurrentPage Page number (1-based)
 	CurrentPage int `json:"current_page" yaml:"current_page" xml:"current_page" bson:"current_page"`
 
-	// Data List of administrative areas
+	// Data List of items
 	Data []AdminAreaList `json:"data" yaml:"data" xml:"data" bson:"data"`
 
 	// FirstPageUrl URL to the first page
@@ -567,7 +548,7 @@ func (response CreateAdminArea500JSONResponse) VisitCreateAdminAreaResponse(w ht
 }
 
 type DeleteAdminAreaRequestObject struct {
-	Id     int `json:"id" yaml:"id" xml:"id" bson:"id"`
+	Id     uint32 `json:"id" yaml:"id" xml:"id" bson:"id"`
 	Params DeleteAdminAreaParams
 }
 
@@ -620,7 +601,7 @@ func (response DeleteAdminArea500JSONResponse) VisitDeleteAdminAreaResponse(w ht
 }
 
 type ReadAdminAreaRequestObject struct {
-	Id     int `json:"id" yaml:"id" xml:"id" bson:"id"`
+	Id     uint32 `json:"id" yaml:"id" xml:"id" bson:"id"`
 	Params ReadAdminAreaParams
 }
 
@@ -674,7 +655,7 @@ func (response ReadAdminArea500JSONResponse) VisitReadAdminAreaResponse(w http.R
 }
 
 type UpdateAdminAreaRequestObject struct {
-	Id   int `json:"id" yaml:"id" xml:"id" bson:"id"`
+	Id   uint32 `json:"id" yaml:"id" xml:"id" bson:"id"`
 	Body *UpdateAdminAreaJSONRequestBody
 }
 
@@ -728,7 +709,7 @@ func (response UpdateAdminArea500JSONResponse) VisitUpdateAdminAreaResponse(w ht
 }
 
 type ListAdminAreaChildrenRequestObject struct {
-	Id     int `json:"id" yaml:"id" xml:"id" bson:"id"`
+	Id     uint32 `json:"id" yaml:"id" xml:"id" bson:"id"`
 	Params ListAdminAreaChildrenParams
 }
 
@@ -740,7 +721,7 @@ type ListAdminAreaChildren200JSONResponse struct {
 	// CurrentPage Page number (1-based)
 	CurrentPage int `json:"current_page" yaml:"current_page" xml:"current_page" bson:"current_page"`
 
-	// Data List of administrative areas
+	// Data List of items
 	Data []AdminAreaList `json:"data" yaml:"data" xml:"data" bson:"data"`
 
 	// FirstPageUrl URL to the first page
@@ -818,8 +799,7 @@ func (response ListAdminAreaChildren500JSONResponse) VisitListAdminAreaChildrenR
 }
 
 type ReadAdminAreaParentRequestObject struct {
-	Id     int `json:"id" yaml:"id" xml:"id" bson:"id"`
-	Params ReadAdminAreaParentParams
+	Id uint32 `json:"id"`
 }
 
 type ReadAdminAreaParentResponseObject interface {
@@ -871,52 +851,52 @@ func (response ReadAdminAreaParent500JSONResponse) VisitReadAdminAreaParentRespo
 	return json.NewEncoder(w).Encode(response)
 }
 
-type RestoreAdminAreaRequestObject struct {
-	Id int `json:"id"`
+type PostAdminAreasIdRestoreRequestObject struct {
+	Id uint32 `json:"id"`
 }
 
-type RestoreAdminAreaResponseObject interface {
-	VisitRestoreAdminAreaResponse(w http.ResponseWriter) error
+type PostAdminAreasIdRestoreResponseObject interface {
+	VisitPostAdminAreasIdRestoreResponse(w http.ResponseWriter) error
 }
 
-type RestoreAdminArea204Response struct {
+type PostAdminAreasIdRestore204Response struct {
 }
 
-func (response RestoreAdminArea204Response) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+func (response PostAdminAreasIdRestore204Response) VisitPostAdminAreasIdRestoreResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type RestoreAdminArea400JSONResponse struct{ N400JSONResponse }
+type PostAdminAreasIdRestore400JSONResponse struct{ N400JSONResponse }
 
-func (response RestoreAdminArea400JSONResponse) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+func (response PostAdminAreasIdRestore400JSONResponse) VisitPostAdminAreasIdRestoreResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type RestoreAdminArea404JSONResponse struct{ N404JSONResponse }
+type PostAdminAreasIdRestore404JSONResponse struct{ N404JSONResponse }
 
-func (response RestoreAdminArea404JSONResponse) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+func (response PostAdminAreasIdRestore404JSONResponse) VisitPostAdminAreasIdRestoreResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type RestoreAdminArea409JSONResponse struct{ N409JSONResponse }
+type PostAdminAreasIdRestore409JSONResponse struct{ N409JSONResponse }
 
-func (response RestoreAdminArea409JSONResponse) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+func (response PostAdminAreasIdRestore409JSONResponse) VisitPostAdminAreasIdRestoreResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type RestoreAdminArea500JSONResponse struct{ N500JSONResponse }
+type PostAdminAreasIdRestore500JSONResponse struct{ N500JSONResponse }
 
-func (response RestoreAdminArea500JSONResponse) VisitRestoreAdminAreaResponse(w http.ResponseWriter) error {
+func (response PostAdminAreasIdRestore500JSONResponse) VisitPostAdminAreasIdRestoreResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -948,7 +928,7 @@ type StrictServerInterface interface {
 	ReadAdminAreaParent(ctx context.Context, request ReadAdminAreaParentRequestObject) (ReadAdminAreaParentResponseObject, error)
 	// Restore a trashed administrative area
 	// (POST /admin-areas/{id}/restore)
-	RestoreAdminArea(ctx context.Context, request RestoreAdminAreaRequestObject) (RestoreAdminAreaResponseObject, error)
+	PostAdminAreasIdRestore(ctx context.Context, request PostAdminAreasIdRestoreRequestObject) (PostAdminAreasIdRestoreResponseObject, error)
 }
 
 type StrictHandlerFunc = strictgin.StrictGinHandlerFunc
@@ -1022,7 +1002,7 @@ func (sh *strictHandler) CreateAdminArea(ctx *gin.Context) {
 }
 
 // DeleteAdminArea operation middleware
-func (sh *strictHandler) DeleteAdminArea(ctx *gin.Context, id int, params DeleteAdminAreaParams) {
+func (sh *strictHandler) DeleteAdminArea(ctx *gin.Context, id uint32, params DeleteAdminAreaParams) {
 	var request DeleteAdminAreaRequestObject
 
 	request.Id = id
@@ -1049,7 +1029,7 @@ func (sh *strictHandler) DeleteAdminArea(ctx *gin.Context, id int, params Delete
 }
 
 // ReadAdminArea operation middleware
-func (sh *strictHandler) ReadAdminArea(ctx *gin.Context, id int, params ReadAdminAreaParams) {
+func (sh *strictHandler) ReadAdminArea(ctx *gin.Context, id uint32, params ReadAdminAreaParams) {
 	var request ReadAdminAreaRequestObject
 
 	request.Id = id
@@ -1076,7 +1056,7 @@ func (sh *strictHandler) ReadAdminArea(ctx *gin.Context, id int, params ReadAdmi
 }
 
 // UpdateAdminArea operation middleware
-func (sh *strictHandler) UpdateAdminArea(ctx *gin.Context, id int) {
+func (sh *strictHandler) UpdateAdminArea(ctx *gin.Context, id uint32) {
 	var request UpdateAdminAreaRequestObject
 
 	request.Id = id
@@ -1110,7 +1090,7 @@ func (sh *strictHandler) UpdateAdminArea(ctx *gin.Context, id int) {
 }
 
 // ListAdminAreaChildren operation middleware
-func (sh *strictHandler) ListAdminAreaChildren(ctx *gin.Context, id int, params ListAdminAreaChildrenParams) {
+func (sh *strictHandler) ListAdminAreaChildren(ctx *gin.Context, id uint32, params ListAdminAreaChildrenParams) {
 	var request ListAdminAreaChildrenRequestObject
 
 	request.Id = id
@@ -1137,11 +1117,10 @@ func (sh *strictHandler) ListAdminAreaChildren(ctx *gin.Context, id int, params 
 }
 
 // ReadAdminAreaParent operation middleware
-func (sh *strictHandler) ReadAdminAreaParent(ctx *gin.Context, id int, params ReadAdminAreaParentParams) {
+func (sh *strictHandler) ReadAdminAreaParent(ctx *gin.Context, id uint32) {
 	var request ReadAdminAreaParentRequestObject
 
 	request.Id = id
-	request.Params = params
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.ReadAdminAreaParent(ctx, request.(ReadAdminAreaParentRequestObject))
@@ -1163,25 +1142,25 @@ func (sh *strictHandler) ReadAdminAreaParent(ctx *gin.Context, id int, params Re
 	}
 }
 
-// RestoreAdminArea operation middleware
-func (sh *strictHandler) RestoreAdminArea(ctx *gin.Context, id int) {
-	var request RestoreAdminAreaRequestObject
+// PostAdminAreasIdRestore operation middleware
+func (sh *strictHandler) PostAdminAreasIdRestore(ctx *gin.Context, id uint32) {
+	var request PostAdminAreasIdRestoreRequestObject
 
 	request.Id = id
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.RestoreAdminArea(ctx, request.(RestoreAdminAreaRequestObject))
+		return sh.ssi.PostAdminAreasIdRestore(ctx, request.(PostAdminAreasIdRestoreRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "RestoreAdminArea")
+		handler = middleware(handler, "PostAdminAreasIdRestore")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		handleErrorResponse(ctx, err)
-	} else if validResponse, ok := response.(RestoreAdminAreaResponseObject); ok {
-		if err := validResponse.VisitRestoreAdminAreaResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(PostAdminAreasIdRestoreResponseObject); ok {
+		if err := validResponse.VisitPostAdminAreasIdRestoreResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {

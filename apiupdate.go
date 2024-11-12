@@ -33,7 +33,7 @@ func (s Server) UpdateAdminArea(
 			_ = tx.Rollback()
 		}
 	}()
-	ac := tx.AdminArea.UpdateOneID(uint32(request.Id))
+	ac := tx.AdminArea.UpdateOneID(request.Id)
 	if request.Body.Name != nil {
 		ac.SetName(*request.Body.Name)
 	}
@@ -47,7 +47,7 @@ func (s Server) UpdateAdminArea(
 				"parent_id", fmt.Errorf("ParentId cannot be equal to self"),
 			)
 		}
-		ac.SetParentID(uint32(*request.Body.ParentId))
+		ac.SetParentID(*request.Body.ParentId)
 	}
 	var aa *ent.AdminArea
 	aa, err = ac.Save(ctx)
@@ -65,15 +65,15 @@ func (s Server) UpdateAdminArea(
 	} else {
 		abbr = nullable.NewNullableWithValue(*aa.Abbr)
 	}
-	var pid *int
+	var pid *uint32
 	if nil == aa.ParentID {
 		pid = nil
 	} else {
-		val := int(*aa.ParentID)
+		val := *aa.ParentID
 		pid = &val
 	}
 	return UpdateAdminArea201JSONResponse{
-		Id:        int(aa.ID),
+		Id:        aa.ID,
 		ParentId:  pid,
 		Name:      aa.Name,
 		Abbr:      abbr,

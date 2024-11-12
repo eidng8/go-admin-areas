@@ -6,7 +6,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/eidng8/go-ent/paginate"
-	"github.com/eidng8/go-ent/softdelete"
 	"github.com/eidng8/go-url"
 	"github.com/gin-gonic/gin"
 
@@ -22,20 +21,19 @@ func (s Server) ListAdminAreaChildren(
 ) (ListAdminAreaChildrenResponseObject, error) {
 	gc := ctx.(*gin.Context)
 	query := s.EC.AdminArea.Query().Order(adminarea.ByID())
-	qc := softdelete.NewSoftDeleteQueryContext(request.Params.Trashed, ctx)
 	applyChildrenNameFilter(request, query)
 	applyChildrenAbbrFilter(request, query)
 	id := request.Id
 	if nil != request.Params.Recurse && *request.Params.Recurse {
-		return getDescendants(gc, qc, query, id)
+		return getDescendants(gc, ctx, query, id)
 	}
-	return getPage(gc, qc, query, id)
+	return getPage(gc, ctx, query, id)
 }
 
 func getPage(
-	gc *gin.Context, qc context.Context, query *ent.AdminAreaQuery, id int,
+	gc *gin.Context, qc context.Context, query *ent.AdminAreaQuery, id uint32,
 ) (ListAdminAreaChildrenResponseObject, error) {
-	query.Where(adminarea.HasParentWith(adminarea.ID(uint32(id))))
+	query.Where(adminarea.HasParentWith(adminarea.ID(id)))
 	pageParams := paginate.GetPaginationParams(gc)
 	areas, err := paginate.GetPage[ent.AdminArea](gc, qc, query, pageParams)
 	if err != nil {
@@ -45,9 +43,9 @@ func getPage(
 }
 
 func getDescendants(
-	gc *gin.Context, qc context.Context, query *ent.AdminAreaQuery, id int,
+	gc *gin.Context, qc context.Context, query *ent.AdminAreaQuery, id uint32,
 ) (ListAdminAreaChildrenResponseObject, error) {
-	areas, err := query.QueryChildrenRecursive(uint32(id)).All(qc)
+	areas, err := query.QueryChildrenRecursive(id).All(qc)
 	if err != nil {
 		return nil, err
 	}

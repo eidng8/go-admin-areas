@@ -6,8 +6,6 @@ import (
 	"testing"
 
 	"github.com/eidng8/go-ent/paginate"
-	sd "github.com/eidng8/go-ent/softdelete"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -157,46 +155,6 @@ func Test_ListAdminAreaChildren_should_return_2nd_page_exclude_deleted(t *testin
 	expected := string(bytes)
 	req, _ := http.NewRequest(
 		http.MethodGet, "http://127.0.0.1/admin-areas/2/children?page=2", nil,
-	)
-	engine.ServeHTTP(res, req)
-	assert.Equal(t, http.StatusOK, res.Code)
-	actual := res.Body.String()
-	require.JSONEq(t, expected, actual)
-}
-
-func Test_ListAdminAreaChildren_should_return_2nd_page_include_deleted(t *testing.T) {
-	engine, entClient, res := setupGinTest(t)
-	entClient.AdminArea.Update().Where(adminarea.IDGT(2)).SetParentID(2).
-		SaveX(context.Background())
-	entClient.AdminArea.Delete().Where(adminarea.IDIn(5, 3, 11)).
-		ExecX(context.Background())
-	rows := entClient.AdminArea.Query().Order(adminarea.ByID()).
-		Where(adminarea.IDLTE(22)).Where(adminarea.ParentIDEQ(2)).
-		Offset(10).Limit(10).AllX(sd.IncludeTrashed(context.Background()))
-	list := make([]*AdminArea, len(rows))
-	for i, row := range rows {
-		list[i] = newAdminAreaFromEnt(row)
-	}
-	page := paginate.PaginatedList[AdminArea]{
-		Total:        48,
-		PerPage:      10,
-		CurrentPage:  2,
-		LastPage:     5,
-		FirstPageUrl: "http://127.0.0.1/admin-areas/2/children?page=1&per_page=10&trashed=1",
-		LastPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=5&per_page=10&trashed=1",
-		NextPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=3&per_page=10&trashed=1",
-		PrevPageUrl:  "http://127.0.0.1/admin-areas/2/children?page=1&per_page=10&trashed=1",
-		Path:         "http://127.0.0.1/admin-areas/2/children",
-		From:         11,
-		To:           20,
-		Data:         list,
-	}
-	bytes, err := jsoniter.Marshal(page)
-	assert.Nil(t, err)
-	expected := string(bytes)
-	req, _ := http.NewRequest(
-		http.MethodGet,
-		"http://127.0.0.1/admin-areas/2/children?page=2&trashed=1", nil,
 	)
 	engine.ServeHTTP(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
